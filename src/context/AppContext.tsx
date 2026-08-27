@@ -211,18 +211,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             const dummyBlob = new Blob(['dummy image content'], { type: 'image/jpeg' });
             formData.append('image', dummyBlob, 'photo.jpg');
 
-            try {
-              const data = await ReportService.createReport(formData);
-              // Add the real mapped issue to state
-              setIssues(prev => [{ ...issue, id: data.report_id, isOfflineSync: false }, ...prev]);
-              syncedCount++;
-              
-              // Remove from remaining queue
-              const index = remainingQueue.findIndex(i => i.id === issue.id);
-              if (index > -1) remainingQueue.splice(index, 1);
-            } catch (e) {
-              console.error('Failed to sync report', e);
-            }
+            const data = await ReportService.createReport(formData);
+            // Add the real mapped issue to state
+            setIssues(prev => [{ ...issue, id: data.report_id, isOfflineSync: false }, ...prev]);
+            syncedCount++;
+            
+            // Remove from remaining queue
+            const index = remainingQueue.findIndex(i => i.id === issue.id);
+            if (index > -1) remainingQueue.splice(index, 1);
+          } catch (e) {
+            console.error('Failed to sync report', e);
+          }
         }
         
         setOfflineQueue(remainingQueue);

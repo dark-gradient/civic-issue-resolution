@@ -284,6 +284,9 @@ export const GovIssueDetail: React.FC<{ issueId: string, onBack: () => void }> =
                   </div>
                 </>
               )}
+
+              <hr className="border-slate-100" />
+              <div className="space-y-2.5">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Actions</p>
                 
                 {issue.status === 'Submitted' || issue.status === 'Under Review' ? (
