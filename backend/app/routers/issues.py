@@ -34,7 +34,7 @@ class IssueVerificationRequest(BaseModel):
     action: str  # 'confirmed' or 'rejected'
     notes: Optional[str] = None
 
-@router.get("")
+@router.get("/")
 async def get_issues(
     city: Optional[str] = None,
     state: Optional[str] = None,

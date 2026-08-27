@@ -15,7 +15,7 @@ class ReportResponse(BaseModel):
     created_at: datetime
     image_url: str
 
-@router.post("", response_model=ReportResponse)
+@router.post("/", response_model=ReportResponse)
 async def create_report(
     description: str = Form(...),
     language: str = Form("en"),

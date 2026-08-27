@@ -4,7 +4,7 @@ from app.database import get_db
 router = APIRouter()
 authorities_router = APIRouter()
 
-@router.get("")
+@router.get("/")
 async def get_departments(db=Depends(get_db)):
     cursor = db.departments.find({})
     deps = await cursor.to_list(length=100)
