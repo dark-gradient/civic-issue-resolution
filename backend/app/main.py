@@ -45,6 +45,15 @@ app.include_router(dashboard_router)
 app.include_router(analytics_router)
 app.include_router(export_router)
 
+
+@app.get("/")
+async def root():
+    return {
+        "message": "Civic Issue Reporting API is running",
+        "status": "online",
+        "docs_url": "/docs"
+    }
+
 @app.get("/health")
 async def health_check():
     return {
