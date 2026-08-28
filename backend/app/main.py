@@ -22,7 +22,7 @@ app = FastAPI(title="Civic Issue Reporting API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # For development
+    allow_origin_regex=".*", # Allow any origin for development
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
