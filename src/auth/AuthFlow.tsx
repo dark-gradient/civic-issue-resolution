@@ -11,11 +11,7 @@ export const AuthFlow: React.FC<{ initialView?: 'WELCOME' | 'CITIZEN_AUTH' | 'GO
 
   const handleCitizenDemo = async () => {
     try {
-      const data = await AuthService.citizenLogin('9999999999', '123456');
-      localStorage.setItem('backend_token', data.access_token);
-      
       const me = await AuthService.getMe();
-      
       const realUser: CitizenUser = {
         type: 'Citizen',
         id: me.id || `usr-${Date.now()}`,
@@ -23,7 +19,7 @@ export const AuthFlow: React.FC<{ initialView?: 'WELCOME' | 'CITIZEN_AUTH' | 'GO
         phone: 'PROTECTED',
         identityHash: me.identity_hash || 'hidden',
         phoneHash: me.phone_hash || 'hidden',
-        aadhaarVerified: true,
+        aadhaarVerified: me.verified || true,
         preferredLanguage: me.preferred_language || 'English',
         location: me.city || 'Unknown',
         createdAt: me.created_at || new Date().toISOString(),
@@ -37,8 +33,7 @@ export const AuthFlow: React.FC<{ initialView?: 'WELCOME' | 'CITIZEN_AUTH' | 'GO
       navigate('/citizen/home', { replace: true });
     } catch (e) {
       console.error(e);
-      alert('Backend unavailable â€” using demo data');
-      // Fallback
+      alert('Backend unavailable — using demo data');
       loginCitizen({
         type: 'Citizen', id: 'demo-cit', name: 'Demo Citizen', phone: 'PROTECTED', identityHash: 'hidden', phoneHash: 'hidden',
         aadhaarVerified: true, preferredLanguage: 'English', location: 'Demo City', createdAt: new Date().toISOString(),
@@ -46,7 +41,7 @@ export const AuthFlow: React.FC<{ initialView?: 'WELCOME' | 'CITIZEN_AUTH' | 'GO
       });
       navigate('/citizen/home', { replace: true });
     }
-  };
+  };;
 
   const handleGovDemo = async () => {
     try {
@@ -225,15 +220,47 @@ export const AuthFlow: React.FC<{ initialView?: 'WELCOME' | 'CITIZEN_AUTH' | 'GO
   const [authStep, setAuthStep] = useState<"PHONE" | "OTP" | "AADHAAR" | "VERIFIED">("PHONE");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
+  const [aadhaar, setAadhaar] = useState("");
 
   const handlePhoneSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (phone.length >= 10) setAuthStep("OTP");
   };
 
-  const handleOtpSubmit = (e: React.FormEvent) => {
+    const handleAadhaarSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (otp.length === 6) setAuthStep("AADHAAR");
+    if (aadhaar.replace(/\D/g, '').length === 12) {
+      try {
+        const token = localStorage.getItem('backend_token');
+        if (token) {
+           await fetch('/api/auth/citizen/verify-identity', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+             body: JSON.stringify({ aadhaar_identifier: aadhaar })
+           });
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setAadhaar(''); // Clear from memory
+        setAuthStep('VERIFIED');
+      }
+    }
+  };
+
+  const handleOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length === 6) {
+      try {
+        const data = await AuthService.citizenLogin(phone, otp);
+        localStorage.setItem('backend_token', data.access_token);
+        setAuthStep("AADHAAR");
+      } catch (e) {
+        console.error(e);
+        alert('Login failed. Ensure backend is running.');
+        setAuthStep("AADHAAR");
+      }
+    }
   };
 
   if (initialView === "CITIZEN_AUTH") {
@@ -306,23 +333,30 @@ export const AuthFlow: React.FC<{ initialView?: 'WELCOME' | 'CITIZEN_AUTH' | 'GO
               )}
 
               {authStep === "AADHAAR" && (
-                <div className="space-y-6">
+                <form onSubmit={handleAadhaarSubmit} className="space-y-6">
                   <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Shield size={40} />
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 mb-2">Demo Aadhaar Verification</h3>
-                  <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4 text-left">
-                    <p className="text-slate-900 font-mono font-bold tracking-widest text-center text-lg mb-2">XXXX XXXX 1234</p>
-                    <div className="text-xs text-slate-500 bg-white p-3 rounded border border-slate-200 shadow-inner">
-                      <p className="font-bold text-slate-700 mb-1">Privacy Notice:</p>
-                      <p>Identity identifier stored as a one-way cryptographic hash (SHA-256). Full Aadhaar is never saved.</p>
-                      <p className="text-[10px] mt-2 font-mono text-slate-400 break-all">Hash: 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92</p>
-                    </div>
+                  <p className="text-sm text-slate-500 mb-4">Prototype only — no connection to UIDAI.</p>
+                  
+                  <input 
+                    type="text"
+                    value={aadhaar}
+                    onChange={(e) => setAadhaar(e.target.value.replace(/[^\d\s]/g, "").slice(0, 14))}
+                    className="w-full bg-slate-100 px-4 py-4 rounded-xl outline-none border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 text-center font-bold text-xl tracking-widest"
+                    placeholder="XXXX XXXX 1234"
+                    required
+                  />
+                  
+                  <div className="text-xs text-slate-500 bg-white p-3 rounded border border-slate-200 shadow-inner text-left">
+                    <p className="font-bold text-slate-700 mb-1">Privacy Notice:</p>
+                    <p>Identity identifier protected using SHA-256 hashing. Full Aadhaar is never saved.</p>
                   </div>
-                  <button onClick={() => setAuthStep("VERIFIED")} className="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-emerald-700 active:scale-95 transition-transform">
+                  <button type="submit" className="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-emerald-700 active:scale-95 transition-transform">
                     Verify Identity
                   </button>
-                </div>
+                </form>
               )}
 
               {authStep === "VERIFIED" && (

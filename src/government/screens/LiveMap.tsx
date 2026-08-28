@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, CircleMarker, Popup, useMap } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import L, { Icon } from 'leaflet';
 import 'leaflet.heat';
@@ -7,6 +7,7 @@ import { useApp } from '../../context/AppContext';
 import { filterIssuesBySearch } from '../../utils';
 import { Filter, Layers, MapPin } from 'lucide-react';
 import { DashboardService } from '../../services/api';
+import { MOCK_ISSUES } from '../../data';
 
 
 const MapController = ({ focusedIssueId, issues }: { focusedIssueId?: string | null, issues: any[] }) => {
@@ -23,36 +24,7 @@ const MapController = ({ focusedIssueId, issues }: { focusedIssueId?: string | n
 };
 
 
-const CityLabels = () => {
-  const cities = [
-    { name: 'Ludhiana', lat: 30.9009, lng: 75.8572 },
-    { name: 'Meerut', lat: 28.9844, lng: 77.7064 },
-    { name: 'New Delhi', lat: 28.6139, lng: 77.2090 },
-    { name: 'Faribabad', lat: 28.4089, lng: 77.3177 },
-    { name: 'Gwalior', lat: 26.2124, lng: 78.1772 },
-    { name: 'Kota', lat: 25.2138, lng: 75.8647 },
-    { name: 'Surat', lat: 21.1702, lng: 72.8310 },
-    { name: 'Mumbai', lat: 19.0760, lng: 72.8777 },
-    { name: 'Bengaluru', lat: 12.9716, lng: 77.5946 },
-  ];
 
-  return (
-    <>
-      {cities.map(c => (
-        <Marker
-          key={c.name}
-          position={[c.lat, c.lng]}
-          icon={new L.DivIcon({
-            className: 'custom-city-label',
-            html: `<div style="display:flex;align-items:center;gap:6px;margin-left:-50px;white-space:nowrap;"><span style="color:white;text-shadow:1px 1px 2px black, -1px -1px 2px black, 1px -1px 2px black, -1px 1px 2px black;font-weight:600;font-size:18px;">${c.name}</span><div style="width:12px;height:12px;background:white;border:2px solid black;border-radius:50%;"></div></div>`,
-            iconSize: [120, 20],
-            iconAnchor: [60, 10]
-          })}
-        />
-      ))}
-    </>
-  );
-};
 
 const HeatmapLayer = ({ points }: { points: [number, number, number][] }) => {
   const map = useMap();
@@ -96,6 +68,10 @@ export const GovLiveMap: React.FC<{ onNavigate?: (s: any, id?: string) => void, 
         setHeatmapPoints(heatRes);
       } catch (e) {
         console.error("Failed to fetch map data", e);
+        // Fallback to MOCK_ISSUES for map rendering when backend is unreachable
+        setMapIssues(MOCK_ISSUES);
+        // For heatmap, just create some mock points if unavailable
+        setHeatmapPoints(MOCK_ISSUES.map(i => [i.lat, i.lng, 0.8]));
       }
     };
     fetchMapData();
@@ -115,19 +91,10 @@ export const GovLiveMap: React.FC<{ onNavigate?: (s: any, id?: string) => void, 
   }, [mapIssues, typeFilter, priorityFilter]);
 
   
-  const getIcon = (priority: string) => {
-    let color = 'blue';
-    if (priority === 'Critical') color = 'red';
-    else if (priority === 'High') color = 'orange';
-    
-    return new Icon({
-      iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-      shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41]
-    });
+  const getIssueColor = (priority: string) => {
+    if (priority === 'Critical') return '#ef4444';
+    if (priority === 'High') return '#f97316';
+    return '#3b82f6';
   };
 
   const center: [number, number] = [20.5937, 78.9629]; // India center
@@ -244,18 +211,23 @@ export const GovLiveMap: React.FC<{ onNavigate?: (s: any, id?: string) => void, 
           {viewMode === 'heatmap' && (
             <>
               <HeatmapLayer points={heatmapPoints} />
-              <CityLabels />
-            </>
+                          </>
           )}
 
           {viewMode === 'markers' && (
-            <MarkerClusterGroup chunkedLoading>
+            <>
               {filteredIssues.map((issue) => (
-                <Marker 
-                  key={issue.id} 
-                  position={[issue.lat, issue.lng]}
-                  icon={getIcon(issue.priority)}
-                >
+                <CircleMarker 
+                    key={issue.id} 
+                    center={[issue.lat, issue.lng]}
+                    radius={6}
+                    pathOptions={{
+                      color: getIssueColor(issue.priority),
+                      fillColor: getIssueColor(issue.priority),
+                      fillOpacity: 0.8,
+                      weight: 2
+                    }}
+                  >
                   <Popup>
                     <div className="p-1">
                       <p className="font-bold text-sm mb-1">{issue.type}</p>
@@ -274,9 +246,9 @@ export const GovLiveMap: React.FC<{ onNavigate?: (s: any, id?: string) => void, 
                       )}
                     </div>
                   </Popup>
-                </Marker>
+                </CircleMarker>
               ))}
-            </MarkerClusterGroup>
+            </>
           )}
         </MapContainer>
       {viewMode === 'heatmap' && (

@@ -15,6 +15,7 @@ class UserBase(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
 class CitizenCreate(UserBase):
+    aadhaar_hash: Optional[str] = None
     identity_verification_status: str = "unverified"
     preferred_language: str = "en"
 

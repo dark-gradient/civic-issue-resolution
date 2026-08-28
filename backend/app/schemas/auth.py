@@ -31,3 +31,7 @@ class UserMeResponse(BaseModel):
     state: Optional[str] = None
     department_id: Optional[str] = None
     authority_id: Optional[str] = None
+    verified: bool = False
+    identity_verification_status: str = "unverified"
+    identity_identifier_protected: bool = False
+\nclass VerifyIdentityRequest(BaseModel):\n    aadhaar_identifier: str\n

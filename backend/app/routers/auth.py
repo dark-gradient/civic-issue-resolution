@@ -1,6 +1,7 @@
+import re
 from fastapi import APIRouter, Depends, HTTPException, status, Request
 from datetime import datetime, timedelta
-from app.schemas.auth import CitizenRegisterRequest, CitizenLoginRequest, GovernmentLoginRequest, TokenResponse, UserMeResponse
+from app.schemas.auth import CitizenRegisterRequest, CitizenLoginRequest, GovernmentLoginRequest, TokenResponse, UserMeResponse, VerifyIdentityRequest
 from app.utils.security import hash_identifier, verify_password, create_access_token, get_password_hash
 from app.database import get_db, db_instance
 from app.dependencies import get_current_user_payload
@@ -20,7 +21,7 @@ async def register_citizen(data: CitizenRegisterRequest, db=Depends(get_db)):
     new_citizen = {
         "name": data.name,
         "phone_hash": phone_hash,
-        "identity_verification_status": "verified",  # Simulated
+        "identity_verification_status": "unverified",
         "preferred_language": data.preferred_language,
         "city": data.city,
         "state": data.state,
@@ -52,7 +53,7 @@ async def login_citizen(data: CitizenLoginRequest, db=Depends(get_db)):
         new_citizen = {
             "name": "Citizen",
             "phone_hash": phone_hash,
-            "identity_verification_status": "verified",
+            "identity_verification_status": "unverified",
             "preferred_language": "en",
             "city": "Chennai",
             "type": "citizen",
@@ -68,6 +69,42 @@ async def login_citizen(data: CitizenLoginRequest, db=Depends(get_db)):
     
     token = create_access_token(user_id, "citizen", "citizen")
     return TokenResponse(access_token=token, user_type="citizen", role="citizen")
+
+@router.post("/citizen/verify-identity")
+async def verify_identity(data: VerifyIdentityRequest, payload: dict = Depends(get_current_user_payload), db=Depends(get_db)):
+    user_id = payload.get("sub")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    # 8. NORMALIZE THE INPUT BEFORE HASHING
+    normalized_identifier = re.sub(r'\D', '', data.aadhaar_identifier)
+    
+    if len(normalized_identifier) != 12:
+        raise HTTPException(status_code=400, detail="Invalid Aadhaar identifier length. Must be 12 digits.")
+    
+    # 6. AADHAAR HASHING FUNCTION (Reuse existing)
+    aadhaar_hash = hash_identifier(normalized_identifier)
+    
+    # 11. PREVENT REPLACEMENT / DUPLICATE ACCOUNTS
+    existing = await db.users.find_one({"aadhaar_hash": aadhaar_hash, "_id": {"$ne": ObjectId(user_id)}})
+    if existing:
+        raise HTTPException(status_code=400, detail="Identity already verified on another account")
+    
+    # Update user in DB
+    await db.users.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {
+            "aadhaar_hash": aadhaar_hash,
+            "identity_verification_status": "verified"
+        }}
+    )
+    
+    await log_audit_action(user_id, "VERIFY_IDENTITY", "users", user_id)
+    
+    return {
+        "verified": True,
+        "identity_protection": "sha256"
+    }
 
 @router.post("/government/login", response_model=TokenResponse)
 async def login_government(data: GovernmentLoginRequest, db=Depends(get_db)):
@@ -129,5 +166,8 @@ async def get_me(payload: dict = Depends(get_current_user_payload), db=Depends(g
         city=user.get("city"),
         state=user.get("state"),
         department_id=user.get("department_id"),
-        authority_id=user.get("authority_id")
+        authority_id=user.get("authority_id"),
+        verified=(user.get("identity_verification_status") == "verified"),
+        identity_verification_status=user.get("identity_verification_status", "unverified"),
+        identity_identifier_protected=True if user.get("aadhaar_hash") else False
     )

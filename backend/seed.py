@@ -29,7 +29,7 @@ async def seed_users():
     }
     
     await db.users.insert_one(citizen)
-    print(f"Created Citizen: Sathyendhar B (Phone: {citizen_phone})")
+    print(f"Created Citizen: Sathyendhar B (Phone: PROTECTED)")
 
     # Government accounts
     gov_roles = [
@@ -56,7 +56,7 @@ async def seed_users():
             "updated_at": datetime.utcnow()
         }
         await db.users.insert_one(gov_user)
-        print(f"Created Government User: {gov['name']} (Emp ID: {gov['employee_id']}, Password: {default_password})")
+        print(f"Created Government User: {gov['name']} (Emp ID: {gov['employee_id']}, Password: PROTECTED)")
 
     # Authorities
     await db.authorities.delete_many({})

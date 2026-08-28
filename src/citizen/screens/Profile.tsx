@@ -147,37 +147,42 @@ export const Profile: React.FC = () => {
             </div>
             
             <div className="space-y-6">
-              <div>
-                <h4 className="font-bold text-slate-900 text-lg mb-2 flex items-center gap-2">
-                  <User size={20} className="text-blue-500" /> {t('identity')}
-                </h4>
-                <div className="bg-emerald-50 text-emerald-800 p-3 rounded-lg border border-emerald-100 font-medium text-sm mb-2 flex items-center gap-2">
-                  <ShieldCheck size={18} /> {t('id_completed')}
+                <div>
+                  <h4 className="font-bold text-slate-900 text-lg mb-2 flex items-center gap-2">
+                    <User size={20} className="text-blue-500" /> IDENTITY
+                  </h4>
+                  <div className="bg-emerald-50 text-emerald-800 p-3 rounded-lg border border-emerald-100 font-medium text-sm mb-2 flex items-center gap-2">
+                    <ShieldCheck size={18} /> Verified Citizen
+                  </div>
                 </div>
-                <p className="text-slate-600 text-sm leading-relaxed">{t('aadhaar_msg')}</p>
-              </div>
 
-              <div>
-                <h4 className="font-bold text-slate-900 text-lg mb-2 flex items-center gap-2">
-                  <ShieldCheck size={20} className="text-emerald-500" /> {t('photo_privacy')}
-                </h4>
-                <p className="text-slate-600 text-sm leading-relaxed">{t('faces_blurred_msg')}</p>
-              </div>
+                <div>
+                  <h4 className="font-bold text-slate-900 text-lg mb-2 flex items-center gap-2">
+                    <ShieldCheck size={20} className="text-emerald-500" /> AADHAAR
+                  </h4>
+                  <div className="bg-emerald-50 text-emerald-800 p-3 rounded-lg border border-emerald-100 font-medium text-sm mb-2 flex items-center gap-2">
+                    <ShieldCheck size={18} /> Identifier protected
+                  </div>
+                  <p className="text-slate-600 text-sm leading-relaxed font-mono">One-way SHA-256 hash used for the prototype.</p>
+                </div>
 
-              <div>
-                <h4 className="font-bold text-slate-900 text-lg mb-2 flex items-center gap-2">
-                  <Lock size={20} className="text-amber-500" /> {t('personal_data')}
-                </h4>
-                <p className="text-slate-600 text-sm leading-relaxed">{t('data_msg')}</p>
-              </div>
+                <div>
+                  <h4 className="font-bold text-slate-900 text-lg mb-2 flex items-center gap-2">
+                    <ShieldCheck size={20} className="text-emerald-500" /> PHONE
+                  </h4>
+                  <div className="bg-emerald-50 text-emerald-800 p-3 rounded-lg border border-emerald-100 font-medium text-sm mb-2 flex items-center gap-2">
+                    <ShieldCheck size={18} /> Identifier protected
+                  </div>
+                  <p className="text-slate-600 text-sm leading-relaxed font-mono">Phone number stored as a derived hash.</p>
+                </div>
 
-              <div>
-                <h4 className="font-bold text-slate-900 text-lg mb-2 flex items-center gap-2">
-                  <Globe size={20} className="text-indigo-500" /> {t('report_visibility')}
-                </h4>
-                <p className="text-slate-600 text-sm leading-relaxed">{t('visibility_msg')}</p>
+                <div>
+                  <h4 className="font-bold text-slate-900 text-lg mb-2 flex items-center gap-2">
+                    <Globe size={20} className="text-indigo-500" /> RAW AADHAAR
+                  </h4>
+                  <p className="text-slate-600 text-sm leading-relaxed font-bold">Not stored in the application database.</p>
+                </div>
               </div>
-            </div>
 
             <button 
               onClick={() => setShowPrivacyModal(false)}
