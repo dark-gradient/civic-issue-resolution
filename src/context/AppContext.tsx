@@ -142,6 +142,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return translations[language][key] || translations.en[key] || key;
   };
 
+  
+  const govTranslations: Record<string, Record<string, string>> = {
+    en: {
+      nav_overview: "Overview",
+      nav_live_map: "Live Map",
+      nav_issue_queue: "Issue Queue",
+      nav_analytics: "Analytics",
+    },
+    ta: {
+      nav_overview: "மேலோட்டம்",
+      nav_live_map: "நேரடி வரைபடம்",
+      nav_issue_queue: "பிரச்சனை வரிசை",
+      nav_analytics: "பகுப்பாய்வு",
+    },
+    hi: {
+      nav_overview: "अवलोकन",
+      nav_live_map: "लाइव मैप",
+      nav_issue_queue: "समस्या कतार",
+      nav_analytics: "एनालिटिक्स",
+    }
+  };
+
+  const govT = (key: string) => {
+    if (govTranslations[govLanguage] && govTranslations[govLanguage][key]) {
+      return govTranslations[govLanguage][key];
+    }
+    if (govTranslations.en[key]) {
+      return govTranslations.en[key];
+    }
+    return key;
+  };
+
   const resetDemoData = () => {
     setIssues(MOCK_ISSUES);
     setOfflineQueue([]);
