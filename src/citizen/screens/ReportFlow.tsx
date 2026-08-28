@@ -173,7 +173,7 @@ export const ReportFlow: React.FC<{ onComplete: () => void }> = ({ onComplete })
           assignee: 'Unassigned',
           slaHours: 24,
           slaRemaining: '24h',
-          images: { before: `http://localhost:8000${data.image_url}` },
+          images: { before: `${import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:8000"}${data.image_url}` },
           privacyProcessed: privacyProtected,
           facesBlurred: privacyProtected ? 2 : 0,
           isOfflineSync: false,

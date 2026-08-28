@@ -1,34 +1,93 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Search, Filter, ChevronDown, MoreHorizontal, Download, AlertTriangle } from 'lucide-react';
+import { Search, Filter, ChevronDown, MoreHorizontal, Download, AlertTriangle, RefreshCw } from 'lucide-react';
 import { StatusBadge } from '../../citizen/screens/MyReports';
 import { cn } from '../../utils';
 import { IssueService } from '../../services/api';
+import { Issue } from '../../types';
+
+export const mapApiIssueToIssue = (apiIssue: any): Issue => {
+  return {
+    id: apiIssue.id || apiIssue._id || apiIssue.issue_id,
+    title: apiIssue.title || apiIssue.type || 'Untitled',
+    type: apiIssue.type || apiIssue.category || 'Unknown',
+    originalLanguage: apiIssue.originalLanguage || 'en',
+    originalDescription: apiIssue.originalDescription || apiIssue.description || '',
+    description: apiIssue.description || '',
+    location: apiIssue.location || apiIssue.address || '',
+    ward: apiIssue.ward || '',
+    city: apiIssue.city || '',
+    state: apiIssue.state || '',
+    authority: apiIssue.authority || '',
+    lat: parseFloat(apiIssue.lat || apiIssue.latitude || 0),
+    lng: parseFloat(apiIssue.lng || apiIssue.longitude || 0),
+    status: apiIssue.status || 'Submitted',
+    priority: apiIssue.priority || 'Low',
+    department: apiIssue.department || 'Unassigned',
+    reportedAt: apiIssue.reportedAt || apiIssue.created_at || new Date().toISOString(),
+    updatedAt: apiIssue.updatedAt || apiIssue.updated_at || new Date().toISOString(),
+    reportsCount: parseInt(apiIssue.reportsCount || apiIssue.report_count || 1),
+    aiConfidence: apiIssue.aiConfidence,
+    assignee: apiIssue.assignee,
+    slaHours: apiIssue.slaHours,
+    slaRemaining: apiIssue.slaRemaining,
+    images: apiIssue.images || { before: 'https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400' },
+    timeline: apiIssue.timeline || []
+  };
+};
 
 export const GovIssueQueue: React.FC<{ onNavigate: (s: any, id?: string) => void, filterBy?: string }> = ({ onNavigate, filterBy }) => {
   const [searchTerm, setSearchTerm] = React.useState('');
-  const { globalSearch, issues: contextIssues, govT } = useApp();
+  const { globalSearch, govT } = useApp();
   const [langFilter, setLangFilter] = useState('all');
-  const [issues, setIssues] = useState<any[]>([]);
+  const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchIssues = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await IssueService.getIssues();
+      const mapped = data.map(mapApiIssueToIssue);
+      setIssues(mapped);
+    } catch (e) {
+      console.error('API failed:', e);
+      setError('Unable to connect to the civic services.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchIssues = async () => {
-      try {
-        const data = await IssueService.getIssues();
-        setIssues(data);
-      } catch (e) {
-        console.error('API failed, using fallback mock');
-        setIssues(contextIssues);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchIssues();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+        <p className="text-slate-500 font-medium">Loading civic issues...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 bg-red-50 rounded-xl border border-red-200">
+        <AlertTriangle className="text-red-500 mb-4" size={48} />
+        <p className="text-red-700 font-medium mb-4">{error}</p>
+        <button 
+          onClick={fetchIssues}
+          className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+        >
+          <RefreshCw size={16} /> Retry
+        </button>
+      </div>
+    );
+  }
+
   const filteredIssues = issues.filter(i => {
-    // Keep local filtering for prototype speed on the frontend
     if (filterBy === 'sla' && i.slaRemaining && !i.slaRemaining.startsWith('-')) return false;
     if (langFilter !== 'all' && i.originalLanguage !== langFilter) return false;
     
@@ -53,153 +112,126 @@ export const GovIssueQueue: React.FC<{ onNavigate: (s: any, id?: string) => void
         return false;
       }
     }
-
     return true;
   });
 
-  if (loading) return <div className="p-8 text-center text-slate-500">Loading Queue...</div>;
-
   return (
-    <div className="h-full flex flex-col bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden animate-in fade-in duration-300 max-w-7xl mx-auto w-full">
-      
-      {/* Toolbar */}
-      <div className="p-4 border-b border-slate-100 flex items-center justify-between bg-white shrink-0">
-        <div className="flex gap-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
+    <div className="bg-white rounded-xl shadow-sm border border-slate-200">
+      <div className="p-5 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex items-center gap-4 w-full sm:w-auto">
+          <div className="relative flex-1 sm:w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
             <input 
               type="text" 
-              placeholder={govT('search_placeholder') || "Search..."}
+              placeholder="Search Queue..." 
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none w-72 transition-all placeholder-slate-400"
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
             />
           </div>
-          
-          <select 
-            value={langFilter}
-            onChange={(e) => setLangFilter(e.target.value)}
-            className="px-3 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">{govT('filter_all') || 'All Languages'}</option>
-            <option value="en">{govT('filter_en') || 'English'}</option>
-            <option value="ta">{govT('filter_ta') || 'Tamil'}</option>
-            <option value="hi">{govT('filter_hi') || 'Hindi'}</option>
-          </select>
-
-          <button className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium bg-white hover:bg-slate-50 text-slate-700 transition-colors">
-            <Filter size={16} /> Filters
-          </button>
+          <div className="flex gap-2">
+            <select
+              value={langFilter}
+              onChange={(e) => setLangFilter(e.target.value)}
+              className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 outline-none"
+            >
+              <option value="all">All Languages</option>
+              <option value="en">English</option>
+              <option value="ta">Tamil</option>
+              <option value="hi">Hindi</option>
+            </select>
+            <button className="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-slate-600 font-medium hover:bg-slate-50">
+              <Filter size={18} /> <span className="hidden sm:inline">Filter</span>
+            </button>
+            <button className="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-slate-600 font-medium hover:bg-slate-50">
+              <Download size={18} /> <span className="hidden sm:inline">Export</span>
+            </button>
+          </div>
         </div>
-
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium bg-white hover:bg-slate-50 text-slate-700 transition-colors">
-            <Download size={16} /> Export
-          </button>
-          <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold shadow-sm transition-colors">
-            Bulk Assign
-          </button>
+        
+        <div className="text-sm font-medium text-slate-500">
+          Showing {filteredIssues.length} of {issues.length}
         </div>
       </div>
 
-      {/* Table */}
-      <div className="flex-1 overflow-auto">
-        <table className="w-full text-sm text-left whitespace-nowrap">
-          <thead className="text-xs text-slate-500 bg-slate-50 uppercase tracking-wider sticky top-0 z-20 shadow-sm">
-            <tr>
-              <th className="px-6 py-4 font-semibold">Priority</th>
-              <th className="px-6 py-4 font-semibold">Issue ID</th>
-              <th className="px-6 py-4 font-semibold">Details</th>
-              <th className="px-6 py-4 font-semibold">Location</th>
-              <th className="px-6 py-4 font-semibold">AI Intel</th>
-              <th className="px-6 py-4 font-semibold">Assignment</th>
-              <th className="px-6 py-4 font-semibold">SLA Limit</th>
-              <th className="px-6 py-4 font-semibold">Status</th>
-              <th className="px-6 py-4 font-semibold text-center sticky right-0 bg-slate-50 z-20 shadow-[-5px_0_15px_-5px_rgba(0,0,0,0.1)]">Action</th>
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-slate-50 text-slate-500 text-sm border-b border-slate-200">
+              <th className="px-5 py-4 font-bold">ID</th>
+              <th className="px-5 py-4 font-bold">{govT('th_priority')}</th>
+              <th className="px-5 py-4 font-bold">{govT('th_details')}</th>
+              <th className="px-5 py-4 font-bold">{govT('th_location')}</th>
+              <th className="px-5 py-4 font-bold">{govT('th_assignee')}</th>
+              <th className="px-5 py-4 font-bold text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {filteredIssues.map(issue => (
-              <tr key={issue.id} className="hover:bg-slate-50 transition-colors group cursor-pointer" onClick={() => onNavigate('issue_detail', issue.id)}>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <div className={cn(
-                      "w-2 h-2 rounded-full",
-                      issue.priority === 'Critical' ? "bg-red-500" :
-                      issue.priority === 'High' ? "bg-amber-500" :
-                      issue.priority === 'Medium' ? "bg-blue-500" : "bg-slate-400"
-                    )} />
-                    <span className="font-bold text-slate-700">{issue.priority}</span>
-                  </div>
+            {filteredIssues.map((issue) => (
+              <tr key={issue.id} className="hover:bg-slate-50/50 transition-colors group">
+                <td className="px-5 py-4">
+                  <div className="font-mono font-medium text-slate-900 text-sm">{issue.id.substring(0, 8)}</div>
+                  <div className="text-xs text-slate-500 mt-1">{new Date(issue.reportedAt).toLocaleDateString()}</div>
                 </td>
-                <td className="px-6 py-4">
-                  <span className="font-mono font-bold text-blue-700 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-md">{issue.id}</span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="font-bold text-slate-900">{issue.type}</div>
-                  <div className="text-xs text-slate-500">{issue.reportsCount} citizen reports</div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="font-medium text-slate-800">{issue.ward}</div>
-                  <div className="text-xs text-slate-500 truncate max-w-[150px]">{issue.location}</div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">{issue.aiConfidence}% match</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="font-medium text-slate-800">{issue.department}</div>
-                  <div className="text-xs text-slate-500">{issue.assignee}</div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className={cn(
-                    "font-bold text-xs px-2 py-1 rounded inline-block", 
-                    issue.slaRemaining.startsWith('-') ? "bg-red-100 text-red-700" :
-                    issue.slaRemaining.includes('1h') || issue.slaRemaining.includes('2h') ? "bg-amber-100 text-amber-700" :
-                    "bg-slate-100 text-slate-700"
+                <td className="px-5 py-4">
+                  <span className={cn(
+                    "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold",
+                    issue.priority === 'Critical' ? "bg-red-100 text-red-700" :
+                    issue.priority === 'High' ? "bg-orange-100 text-orange-700" :
+                    "bg-blue-100 text-blue-700"
                   )}>
-                    {issue.slaRemaining.startsWith('-') ? `Overdue (${issue.slaRemaining.replace('-', '')})` : issue.slaRemaining}
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <StatusBadge status={issue.status} />
-                  {issue.status === 'Reopened' && (
-                    <div className="text-[10px] text-red-600 font-bold mt-1 flex items-center gap-1">
-                      <AlertTriangle size={10} /> Citizen Escalated
+                    {issue.priority}
+                  </span>
+                  {issue.slaRemaining && issue.slaRemaining.startsWith('-') && (
+                    <div className="flex items-center gap-1 text-red-600 text-xs font-bold mt-2">
+                      <AlertTriangle size={12} /> SLA Breach
                     </div>
                   )}
                 </td>
-                <td className="px-6 py-4 text-center sticky right-0 bg-white group-hover:bg-slate-50 shadow-[-5px_0_15px_-5px_rgba(0,0,0,0.1)] transition-colors z-10">
-                  
-                  <div className="flex justify-center gap-2">
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); onNavigate('map', issue.id); }}
-                      className="text-xs font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 px-3 py-1.5 rounded-lg shadow-sm transition-colors"
-                    >
-                      Map
-                    </button>
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); onNavigate('issue_detail', issue.id); }}
-                      className="text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-lg shadow-sm transition-colors"
-                    >
-                      Action
-                    </button>
+                <td className="px-5 py-4 max-w-xs">
+                  <div className="font-bold text-slate-900 mb-1 truncate">{issue.type}</div>
+                  <div className="flex gap-2 items-center">
+                    <StatusBadge status={issue.status} />
+                    {issue.originalLanguage !== 'en' && (
+                      <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-slate-100 text-slate-500">
+                        {issue.originalLanguage}
+                      </span>
+                    )}
                   </div>
-
+                </td>
+                <td className="px-5 py-4">
+                  <div className="font-medium text-slate-900 text-sm truncate max-w-[150px]">{issue.ward || issue.city}</div>
+                  <div className="text-xs text-slate-500 mt-1">{issue.department}</div>
+                </td>
+                <td className="px-5 py-4">
+                  {issue.assignee ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-600">
+                        {issue.assignee.substring(0,2).toUpperCase()}
+                      </div>
+                      <span className="text-sm font-medium text-slate-700">{issue.assignee}</span>
+                    </div>
+                  ) : (
+                    <span className="text-sm text-slate-400 italic">Unassigned</span>
+                  )}
+                </td>
+                <td className="px-5 py-4 text-right">
+                  <button 
+                    onClick={() => onNavigate('issue_detail', issue.id)}
+                    className="inline-flex items-center justify-center px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-blue-600 hover:bg-blue-50 hover:border-blue-200 transition-colors"
+                  >
+                    {govT('btn_manage')}
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-      </div>
-      
-      <div className="p-4 border-t border-slate-100 bg-white flex items-center justify-between text-sm text-slate-500 shrink-0">
-        <div>Showing {filteredIssues.length} issues</div>
-        <div className="flex gap-2">
-          <button className="px-3 py-1.5 border border-slate-200 rounded-lg bg-white hover:bg-slate-50 font-medium disabled:opacity-50 transition-colors" disabled>Previous</button>
-          <button className="px-3 py-1.5 border border-slate-200 rounded-lg bg-white hover:bg-slate-50 font-medium transition-colors">Next</button>
-        </div>
+        {filteredIssues.length === 0 && (
+          <div className="p-12 text-center text-slate-500">
+            No issues found matching your filters.
+          </div>
+        )}
       </div>
     </div>
   );
