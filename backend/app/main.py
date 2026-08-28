@@ -22,7 +22,7 @@ app = FastAPI(title="Civic Issue Reporting API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=".*", # Allow any origin for development
+    allow_origins=[os.getenv('FRONTEND_URL', 'https://civic-frontend.onrender.com')],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -53,6 +53,22 @@ async def root():
         "status": "online",
         "docs_url": "/docs"
     }
+
+from typing import List, Dict, Any
+from fastapi import Depends
+from app.database import get_db
+from datetime import datetime
+
+@app.post("/api/internal/seed")
+async def seed_data(issues: List[Dict[str, Any]], db=Depends(get_db)):
+    for issue in issues:
+        if '_id' in issue: del issue['_id']
+        if 'id' in issue: del issue['id']
+        issue['reportedAt'] = datetime.fromisoformat(issue['reportedAt'].replace('Z', '+00:00')) if 'reportedAt' in issue else datetime.utcnow()
+        issue['updatedAt'] = datetime.fromisoformat(issue['updatedAt'].replace('Z', '+00:00')) if 'updatedAt' in issue else datetime.utcnow()
+    if issues:
+        await db.civic_issues.insert_many(issues)
+    return {"status": "seeded", "count": len(issues)}
 
 @app.get("/health")
 async def health_check():

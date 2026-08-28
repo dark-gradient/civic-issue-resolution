@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     OBJECT_STORAGE_URL: str = ""
     OBJECT_STORAGE_KEY: str = ""
     OBJECT_STORAGE_SECRET: str = ""
+    FRONTEND_URL: str = "https://civic-frontend.onrender.com"
 
     class Config:
         env_file = ".env"

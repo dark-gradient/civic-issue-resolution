@@ -8,9 +8,8 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.0
-      # You can add your MongoDB URL here or in the Render Dashboard
-      # - key: MONGODB_URL
-      #   sync: false
+      - key: FRONTEND_URL
+        value: https://civic-frontend.onrender.com
 
   # 2. React Frontend
   - type: web
@@ -22,7 +21,7 @@ services:
       - key: NODE_VERSION
         value: 20.11.1
       - key: VITE_API_URL
-        value: https://civic-backend.onrender.com/api # You may need to update this to match the actual generated backend URL
+        value: https://civic-backend-qjm5.onrender.com/api
 
     routes:
       - type: rewrite
