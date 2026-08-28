@@ -55,6 +55,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const stored = localStorage.getItem('civic_language') as LanguageCode | null;
     return stored && ['en', 'ta', 'hi'].includes(stored) ? stored : 'en';
   });
+  
+  const [govLanguage, setGovLanguageState] = useState<LanguageCode>(() => {
+    const stored = localStorage.getItem('civic_gov_language') as LanguageCode | null;
+    return stored && ['en', 'ta', 'hi'].includes(stored) ? stored : 'en';
+  });
+
+  const setGovLanguage = (lang: LanguageCode) => {
+    setGovLanguageState(lang);
+    localStorage.setItem('civic_gov_language', lang);
+  };
 
   const [auth, setAuth] = useState<GlobalAuthState>({
     citizenSession: null,
