@@ -219,7 +219,7 @@ export const GovLiveMap: React.FC<{ onNavigate?: (s: any, id?: string) => void, 
               {filteredIssues.map((issue) => (
                 <CircleMarker 
                     key={issue.id} 
-                    center={[issue.lat, issue.lng]}
+                    center={[issue.lat ?? issue.latitude, issue.lng ?? issue.longitude]}
                     radius={6}
                     pathOptions={{
                       color: getIssueColor(issue.priority),
@@ -230,11 +230,11 @@ export const GovLiveMap: React.FC<{ onNavigate?: (s: any, id?: string) => void, 
                   >
                   <Popup>
                     <div className="p-1">
-                      <p className="font-bold text-sm mb-1">{issue.type}</p>
-                      <p className="text-xs text-slate-500">{issue.location}</p>
-                      <p className="text-xs text-slate-500">{issue.city}, {issue.state}</p>
+                      <p className="font-bold text-sm mb-1">{issue.type || issue.issue_type}</p>
+                      <p className="text-xs text-slate-500">{issue.location || "Location not provided"}</p>
+                      <p className="text-xs text-slate-500">{issue.city || "Unknown City"}, {issue.state || "Unknown State"}</p>
                       <div className="mt-2 text-xs">
-                        <span className="font-bold text-slate-900">{issue.authority}</span>
+                        <span className="font-bold text-slate-900">{issue.authority || "Unknown Authority"}</span>
                       </div>
                       {onNavigate && (
                         <button 
