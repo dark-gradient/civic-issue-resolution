@@ -65,8 +65,8 @@ async def seed_data(request: Request, db=Depends(get_db)):
     for issue in issues:
         if '_id' in issue: del issue['_id']
         if 'id' in issue: del issue['id']
-        issue['reportedAt'] = datetime.fromisoformat(issue['reportedAt'].replace('Z', '+00:00')) if 'reportedAt' in issue else datetime.utcnow()
-        issue['updatedAt'] = datetime.fromisoformat(issue['updatedAt'].replace('Z', '+00:00')) if 'updatedAt' in issue else datetime.utcnow()
+        
+        
     if issues:
         await db.civic_issues.insert_many(issues)
     return {"status": "seeded", "count": len(issues)}
