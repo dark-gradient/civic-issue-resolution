@@ -34,4 +34,6 @@ class UserMeResponse(BaseModel):
     verified: bool = False
     identity_verification_status: str = "unverified"
     identity_identifier_protected: bool = False
-\nclass VerifyIdentityRequest(BaseModel):\n    aadhaar_identifier: str\n
+
+class VerifyIdentityRequest(BaseModel):
+    aadhaar_identifier: str
