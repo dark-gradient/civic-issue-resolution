@@ -10,14 +10,17 @@ class Database:
 db_instance = Database()
 
 async def connect_to_mongo():
-    db_instance.client = AsyncIOMotorClient(settings.MONGODB_URI)
-    db_instance.db = db_instance.client[settings.MONGODB_DATABASE]
-    
-    # Initialize geo indexes
-    await db_instance.db.reports.create_index([("location", "2dsphere")])
-    await db_instance.db.civic_issues.create_index([("location", "2dsphere")])
-    
-    print("Connected to MongoDB and created 2dsphere indexes.")
+    try:
+        db_instance.client = AsyncIOMotorClient(settings.MONGODB_URI, serverSelectionTimeoutMS=5000)
+        db_instance.db = db_instance.client[settings.MONGODB_DATABASE]
+        
+        # Initialize geo indexes
+        await db_instance.db.reports.create_index([("location", "2dsphere")])
+        await db_instance.db.civic_issues.create_index([("location", "2dsphere")])
+        
+        print("Connected to MongoDB and created 2dsphere indexes.")
+    except Exception as e:
+        print(f"Failed to connect to MongoDB: {e}")
 
 async def close_mongo_connection():
     if db_instance.client:
