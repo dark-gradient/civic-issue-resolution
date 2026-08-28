@@ -40,16 +40,16 @@ export const GovApp: React.FC = () => {
     const activeCount = issues.filter(i => !['Resolved', 'Closed'].includes(i.status)).length;
     items.push({ id: 'queue', label: govT('nav_issue_queue'), icon: Layers, badge: activeCount > 0 ? activeCount : undefined });
     
-    items.push({ id: 'departments', label: 'Departments', icon: Users });
-    items.push({ id: 'field', label: 'Field Operations', icon: Truck });
+    items.push({ id: 'departments', label: govT('nav_departments'), icon: Users });
+    items.push({ id: 'field', label: govT('nav_field_ops'), icon: Truck });
     
     const slaBreached = issues.filter(i => i.slaRemaining.startsWith('-')).length;
-    items.push({ id: 'sla', label: 'SLA Alerts', icon: AlertTriangle, badge: slaBreached > 0 ? slaBreached : undefined });
+    items.push({ id: 'sla', label: govT('nav_sla_alerts'), icon: AlertTriangle, badge: slaBreached > 0 ? slaBreached : undefined });
 
-    items.push({ id: 'reports', label: 'Citizen Reports', icon: MessageSquare });
+    items.push({ id: 'reports', label: govT('nav_citizen_reports'), icon: MessageSquare });
     items.push({ id: 'analytics', label: govT('nav_analytics'), icon: BarChart3 });
-    items.push({ id: 'hotspots', label: 'Recurring Hotspots', icon: MapIcon });
-    items.push({ id: 'settings', label: 'Settings', icon: Settings });
+    items.push({ id: 'hotspots', label: govT('nav_hotspots'), icon: MapIcon });
+    items.push({ id: 'settings', label: govT('nav_settings'), icon: Settings });
 
     return items;
   };
@@ -87,7 +87,7 @@ export const GovApp: React.FC = () => {
                   <p className="text-xs text-slate-500">{currentUser?.department} Department</p>
                 </div>
                 <div className="p-2 border-b border-slate-100 bg-slate-50">
-                  <p className="text-xs font-bold text-slate-500 mb-2 px-2 uppercase tracking-wider">Language / ???? / ????</p>
+                  <p className="text-xs font-bold text-slate-500 mb-2 px-2 uppercase tracking-wider">{govT('nav_language')}</p>
                   <div className="flex bg-white rounded-lg border border-slate-200 overflow-hidden">
                     <button onClick={() => setGovLanguage("en")} className={`flex-1 py-1.5 text-xs font-bold ${govLanguage === "en" ? "bg-blue-600 text-white" : "hover:bg-slate-50"}`}>EN</button>
                     <button onClick={() => setGovLanguage("ta")} className={`flex-1 py-1.5 text-xs font-bold border-l border-r border-slate-200 ${govLanguage === "ta" ? "bg-blue-600 text-white" : "hover:bg-slate-50"}`}>TA</button>
@@ -103,7 +103,7 @@ export const GovApp: React.FC = () => {
                   }} 
                   className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 font-bold flex items-center gap-2"
                 >
-                  <LogOut size={16} /> Sign Out
+                  <LogOut size={16} /> {govT('nav_sign_out')}
                 </button>
               </div>
             </div>
@@ -116,8 +116,8 @@ export const GovApp: React.FC = () => {
       {showSignOutConfirm && (
         <div className="fixed inset-0 bg-slate-900/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-sm rounded-3xl p-6 animate-in zoom-in-95 duration-200 shadow-2xl">
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Sign Out</h3>
-            <p className="text-slate-500 mb-6">Are you sure you want to sign out of the Government Portal?</p>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">{govT('nav_sign_out')}</h3>
+            <p className="text-slate-500 mb-6">{govT('sign_out_confirm')}</p>
             <div className="flex gap-3">
               <button 
                 onClick={() => setShowSignOutConfirm(false)}
@@ -157,7 +157,7 @@ export const GovApp: React.FC = () => {
           </div>
 
           <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 mt-2 px-3">Views</div>
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 mt-2 px-3">{govT('nav_views')}</div>
             {navItems.map(item => (
               <button
                 key={item.id}

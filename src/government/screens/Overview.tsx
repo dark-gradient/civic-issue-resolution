@@ -129,18 +129,18 @@ export const GovOverview: React.FC<{ onNavigate: (s: any, id?: string) => void }
         {/* Left: Priority Queue */}
         <div className="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-white">
-            <h3 className="font-bold text-slate-800 text-base">Priority Action Queue</h3>
-            <button onClick={() => onNavigate('queue')} className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline">View All</button>
+            <h3 className="font-bold text-slate-800 text-base">{govT('priority_queue')}</h3>
+            <button onClick={() => onNavigate('queue')} className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline">{govT('view_all')}</button>
           </div>
           
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-sm text-left">
               <thead className="text-xs text-slate-500 bg-slate-50/50 uppercase tracking-wider">
                 <tr>
-                  <th className="px-5 py-3 font-semibold">Priority</th>
-                  <th className="px-5 py-3 font-semibold">Issue Details</th>
-                  <th className="px-5 py-3 font-semibold">Location</th>
-                  <th className="px-5 py-3 font-semibold">Assignee</th>
+                  <th className="px-5 py-3 font-semibold">{govT('th_priority')}</th>
+                  <th className="px-5 py-3 font-semibold">{govT('th_details')}</th>
+                  <th className="px-5 py-3 font-semibold">{govT('th_location')}</th>
+                  <th className="px-5 py-3 font-semibold">{govT('th_assignee')}</th>
                   <th className="px-5 py-3 font-semibold text-right">Action</th>
                 </tr>
               </thead>
@@ -187,8 +187,8 @@ export const GovOverview: React.FC<{ onNavigate: (s: any, id?: string) => void }
         {/* Right: Department Workload Widget */}
         <div className="lg:col-span-1 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-white">
-            <h3 className="font-bold text-slate-800 text-base">Department Workload</h3>
-            <button onClick={() => onNavigate('departments')} className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline">View All</button>
+            <h3 className="font-bold text-slate-800 text-base">{govT('dept_workload')}</h3>
+            <button onClick={() => onNavigate('departments')} className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline">{govT('view_all')}</button>
           </div>
           <div className="flex-1 p-5 space-y-5 overflow-y-auto">
             
