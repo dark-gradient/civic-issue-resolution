@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { User, Building, ArrowLeft } from 'lucide-react';
+import { User, Building, ArrowLeft, Shield, CheckCircle } from 'lucide-react';
 import { AuthService } from '../services/api';
 import { CitizenUser, GovUser } from '../types';
 
@@ -221,4 +221,128 @@ export const AuthFlow: React.FC<{ initialView?: 'WELCOME' | 'CITIZEN_AUTH' | 'GO
       </div>
     </div>
   );
+
+  const [authStep, setAuthStep] = useState<"PHONE" | "OTP" | "AADHAAR" | "VERIFIED">("PHONE");
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+
+  const handlePhoneSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (phone.length >= 10) setAuthStep("OTP");
+  };
+
+  const handleOtpSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (otp.length === 6) setAuthStep("AADHAAR");
+  };
+
+  if (initialView === "CITIZEN_AUTH") {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 p-6">
+        <DebugPanel />
+        <div className="w-full max-w-md">
+          <button 
+            onClick={() => navigate("/select-role", { replace: true })} 
+            className="text-slate-500 hover:text-slate-900 font-bold flex items-center gap-2 mb-8"
+          >
+            <ArrowLeft size={20} /> Back to Role Selection
+          </button>
+          
+          <div className="animate-in fade-in duration-300">
+            <h2 className="text-3xl font-bold text-slate-900 mb-2">Citizen Portal</h2>
+            <p className="text-slate-500 mb-8 font-medium">Demo Access</p>
+            
+            <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm text-center">
+              
+              {authStep === "PHONE" && (
+                <form onSubmit={handlePhoneSubmit} className="space-y-4">
+                  <div className="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <User size={40} />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">Enter Mobile Number</h3>
+                  <div className="flex bg-slate-100 rounded-xl overflow-hidden border border-slate-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200">
+                    <div className="px-4 py-4 bg-slate-200 text-slate-700 font-bold border-r border-slate-300">
+                      +91
+                    </div>
+                    <input 
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                      className="w-full bg-transparent px-4 py-4 outline-none font-bold text-slate-900 tracking-wider text-lg"
+                      placeholder="99999 99999"
+                      required
+                    />
+                  </div>
+                  <button type="submit" className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-700 active:scale-95 transition-transform mt-4">
+                    Continue
+                  </button>
+                </form>
+              )}
+
+              {authStep === "OTP" && (
+                <form onSubmit={handleOtpSubmit} className="space-y-6">
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">Verify Mobile</h3>
+                  <p className="text-sm text-slate-500 mb-4">OTP sent to +91 {phone}</p>
+                  
+                  <input 
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    className="w-full bg-slate-100 px-4 py-4 rounded-xl outline-none border border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-center font-bold text-2xl tracking-[0.5em]"
+                    placeholder="------"
+                    required
+                  />
+                  <div className="flex gap-2">
+                    <button type="submit" className="flex-1 bg-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-700 active:scale-95 transition-transform">
+                      Verify OTP
+                    </button>
+                    <button type="button" onClick={() => setOtp("123456")} className="flex-1 bg-slate-200 text-slate-700 py-4 rounded-xl font-bold text-lg hover:bg-slate-300 active:scale-95 transition-transform">
+                      Demo OTP
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {authStep === "AADHAAR" && (
+                <div className="space-y-6">
+                  <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Shield size={40} />
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2">Demo Aadhaar Verification</h3>
+                  <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4 text-left">
+                    <p className="text-slate-900 font-mono font-bold tracking-widest text-center text-lg mb-2">XXXX XXXX 1234</p>
+                    <div className="text-xs text-slate-500 bg-white p-3 rounded border border-slate-200 shadow-inner">
+                      <p className="font-bold text-slate-700 mb-1">Privacy Notice:</p>
+                      <p>Identity identifier stored as a one-way cryptographic hash (SHA-256). Full Aadhaar is never saved.</p>
+                      <p className="text-[10px] mt-2 font-mono text-slate-400 break-all">Hash: 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setAuthStep("VERIFIED")} className="w-full bg-emerald-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-emerald-700 active:scale-95 transition-transform">
+                    Verify Identity
+                  </button>
+                </div>
+              )}
+
+              {authStep === "VERIFIED" && (
+                <div className="space-y-6 animate-in zoom-in duration-300">
+                  <div className="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle size={48} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-900 mb-2">Identity Verified</h3>
+                  <p className="text-slate-600 mb-6">Your CivicPulse account is verified.</p>
+                  <button onClick={handleCitizenDemo} className="w-full bg-blue-600 text-white py-4 rounded-xl font-bold text-lg hover:bg-blue-700 active:scale-95 transition-transform">
+                    Enter Portal
+                  </button>
+                </div>
+              )}
+
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
 };

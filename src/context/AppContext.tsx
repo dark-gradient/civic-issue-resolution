@@ -35,7 +35,10 @@ interface AppContextType {
   
   language: LanguageCode;
   setLanguage: (lang: LanguageCode) => void;
+  govLanguage: LanguageCode;
+  setGovLanguage: (lang: LanguageCode) => void;
   t: (key: keyof typeof translations.en) => string;
+  govT: (key: string) => string;
   resetDemoData: () => void;
   globalSearch: string;
   setGlobalSearch: (s: string) => void;
@@ -279,8 +282,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const activeApp = auth.activeRole === 'citizen' ? 'CITIZEN' : (auth.activeRole === 'government' ? 'GOV' : null);
 
   return (
-    <AppContext.Provider value={{ 
-      issues, addIssue, updateIssueStatus, updateIssueAssignment,
+    <AppContext.Provider value={{
+        govLanguage,
+        setGovLanguage,
+        govT, 
+        issues, addIssue, updateIssueStatus, updateIssueAssignment,
       isOffline, toggleOffline, offlineQueue,
       auth, user,
       loginCitizen, loginGov, logoutCitizen, logoutGov, switchToCitizen, switchToGov,

@@ -1,395 +1,2884 @@
-import { Issue, TimelineEvent } from './types';
-
-const pastDate = (days: number, hours: number = 0) => new Date(Date.now() - 1000 * 60 * 60 * 24 * days - 1000 * 60 * 60 * hours).toISOString();
+import { Issue, TimelineEvent } from "./types";
 
 export const MOCK_ISSUES: Issue[] = [
-  // CHENNAI - Pothole Cluster
   {
-    id: 'CIV-10482',
-    title: 'Large pothole near bus stop',
-    type: 'Pothole',
-    originalLanguage: 'ta',
-    originalDescription: 'பேருந்து நிலையத்திற்கு அருகில் சாலையில் பெரிய குழி உள்ளது. இது மிகவும் ஆபத்தானது.',
-    description: 'There is a massive pothole near the bus stop causing severe traffic slowdowns and risking accidents for two-wheelers.',
-    location: '12, Anna Nagar Main Road',
-    ward: 'Ward 37',
-    city: 'Chennai',
-    state: 'Tamil Nadu',
-    authority: 'Greater Chennai Corporation (GCC)',
-    lat: 13.0827,
-    lng: 80.2707,
-    status: 'Assigned',
-    priority: 'Critical',
-    department: 'Roads',
-    reportedAt: pastDate(0, 2), // 2 hours ago
-    updatedAt: pastDate(0, 0.5),
-    reportsCount: 17,
-    aiConfidence: 98,
-    assignee: 'Road Maintenance Team B',
-    slaHours: 24,
-    slaRemaining: '21h 30m',
-    images: { 
-      before: 'https://loremflickr.com/400/300/pothole,road?lock=10482' 
+    "id": "CIV-10401",
+    "title": "Damaged footpath",
+    "type": "Damaged footpath",
+    "originalLanguage": "en",
+    "originalDescription": "There is a large pothole near the bus stop.",
+    "description": "This is a reported issue regarding damaged footpath. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 51, Ahmedabad",
+    "ward": "Ward 122",
+    "city": "Ahmedabad",
+    "state": "Gujarat",
+    "authority": "Water Board",
+    "lat": 13.021960223760113,
+    "lng": 80.23654206516555,
+    "status": "Closed",
+    "priority": "High",
+    "department": "Drainage",
+    "reportedAt": "2026-08-17T14:20:03.402Z",
+    "updatedAt": "2026-08-21T01:22:14.672Z",
+    "reportsCount": 2,
+    "aiConfidence": 99,
+    "assignee": "Team N",
+    "slaHours": 48,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
     },
-    privacyProcessed: true,
-    facesBlurred: 2,
-    timeline: [
-      { id: 't1', title: 'Report submitted', timestamp: pastDate(0, 2), status: 'Submitted', description: 'Initial report by citizen.' },
-      { id: 't2', title: 'AI analysis completed', timestamp: pastDate(0, 1.9), status: 'AI Analysis', description: 'Categorized as Pothole with 98% confidence. Merged 16 duplicate reports.' },
-      { id: 't3', title: 'Assigned to Roads Department', timestamp: pastDate(0, 1.5), status: 'Assigned', description: 'Assigned based on jurisdiction.' },
+    "timeline": [
+      {
+        "id": "tl-1-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-17T14:20:03.402Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-1-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-17T20:11:21.822Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Sanitation team."
+      },
+      {
+        "id": "tl-1-3",
+        "title": "Work started",
+        "timestamp": "2026-08-18T07:42:21.293Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-1-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-20T11:31:48.453Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      },
+      {
+        "id": "tl-1-5",
+        "title": "Citizen verified",
+        "timestamp": "2026-08-21T01:22:14.672Z",
+        "status": "Closed",
+        "actor": "Citizen",
+        "action": "Resolution confirmed",
+        "description": "Citizen confirmed the resolution.",
+        "notes": "Issue permanently closed."
+      }
     ]
   },
-  // BENGALURU - Open Manhole Reopened
   {
-    id: 'CIV-10501',
-    title: 'Open manhole near school',
-    type: 'Open Manhole',
-    originalLanguage: 'en',
-    originalDescription: 'Manhole cover is missing entirely on the pavement right outside the primary school. Very dangerous.',
-    description: 'Manhole cover is missing entirely on the pavement right outside the primary school. Very dangerous.',
-    location: 'Koramangala 5th Block, Near Govt School',
-    ward: 'Ward 68',
-    city: 'Bengaluru',
-    state: 'Karnataka',
-    authority: 'Bruhat Bengaluru Mahanagara Palike (BBMP)',
-    lat: 12.9352,
-    lng: 77.6245,
-    status: 'Reopened',
-    priority: 'Critical',
-    department: 'Drainage',
-    reportedAt: pastDate(1), // 1 day ago
-    updatedAt: pastDate(0, 0.1),
-    reportsCount: 31,
-    aiConfidence: 99,
-    assignee: 'Drainage Team C',
-    slaHours: 12,
-    slaRemaining: '-12h 10m', // Breached
-    images: { 
-      before: 'https://loremflickr.com/400/300/manhole?lock=10501',
-      after: 'https://loremflickr.com/400/300/manhole?lock=10501' 
+    "id": "CIV-10402",
+    "title": "Road debris",
+    "type": "Road debris",
+    "originalLanguage": "hi",
+    "originalDescription": "????? ?? ??? ???? ?? ?? ???? ????? ???",
+    "description": "This is a reported issue regarding road debris. There is a large pothole near the bus stop.",
+    "location": "Street 90, Kolkata",
+    "ward": "Ward 14",
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "authority": "Water Board",
+    "lat": 13.024987707340975,
+    "lng": 80.2681831288695,
+    "status": "Resolved",
+    "priority": "High",
+    "department": "Drainage",
+    "reportedAt": "2026-08-12T07:34:28.765Z",
+    "updatedAt": "2026-08-13T09:18:06.119Z",
+    "reportsCount": 2,
+    "aiConfidence": 97,
+    "assignee": "Team Q",
+    "slaHours": 48,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
     },
-    privacyProcessed: true,
-    facesBlurred: 1,
-    timeline: [
-      { id: 't1', title: 'Report submitted', timestamp: pastDate(1), status: 'Submitted', description: 'Citizen reported open manhole.' },
-      { id: 't2', title: 'Marked Resolved', timestamp: pastDate(0, 10), status: 'Awaiting Verification', description: 'Temporary barricade placed.' },
-      { id: 't3', title: 'Reopened by Citizen', timestamp: pastDate(0, 0.1), status: 'Reopened', description: 'Barricade fell, manhole still open. Not permanently fixed.' },
+    "timeline": [
+      {
+        "id": "tl-2-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-12T07:34:28.765Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-2-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-12T10:40:18.011Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Drainage team."
+      },
+      {
+        "id": "tl-2-3",
+        "title": "Work started",
+        "timestamp": "2026-08-12T14:15:24.316Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-2-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-13T09:18:06.119Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      }
     ]
   },
-  // CHENNAI - Water Leakage
   {
-    id: 'CIV-10512',
-    title: 'Overflowing Sewage',
-    type: 'Drainage',
-    originalLanguage: 'ta',
-    originalDescription: 'சாக்கடை நீர் பிரதான சாலையில் பெருக்கெடுத்து ஓடுகிறது.',
-    description: 'Sewage water is overflowing onto the main road, causing a severe biohazard.',
-    location: 'Velachery Main Road',
-    ward: 'Ward 177',
-    city: 'Chennai',
-    state: 'Tamil Nadu',
-    authority: 'CMWSSB',
-    lat: 12.9750,
-    lng: 80.2210,
-    status: 'Submitted',
-    priority: 'High',
-    department: 'Unassigned',
-    reportedAt: pastDate(0, 0.25),
-    updatedAt: pastDate(0, 0.25),
-    reportsCount: 8,
-    aiConfidence: 91,
-    assignee: 'Unassigned',
-    slaHours: 12,
-    slaRemaining: '11h 45m',
-    images: { 
-      before: 'https://loremflickr.com/400/300/city,street?lock=10512' 
+    "id": "CIV-10403",
+    "title": "Pothole",
+    "type": "Pothole",
+    "originalLanguage": "ta",
+    "originalDescription": "????????? ?? ???????? ???????????????.",
+    "description": "This is a reported issue regarding pothole. Garbage has accumulated for days and is smelling bad.",
+    "location": "Street 96, Jaipur",
+    "ward": "Ward 20",
+    "city": "Jaipur",
+    "state": "Rajasthan",
+    "authority": "Public Works Department",
+    "lat": 13.021852486594714,
+    "lng": 80.28451799507492,
+    "status": "Submitted",
+    "priority": "Critical",
+    "department": "Water",
+    "reportedAt": "2026-07-29T19:48:59.896Z",
+    "updatedAt": "2026-07-29T19:48:59.896Z",
+    "reportsCount": 4,
+    "aiConfidence": 83,
+    "assignee": "Team A",
+    "slaHours": 48,
+    "slaRemaining": "13h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
     },
-    privacyProcessed: true,
-    facesBlurred: 0,
-    timeline: [
-      { id: 't1', title: 'Report submitted', timestamp: pastDate(0, 0.25), status: 'Submitted', description: 'Reported by citizen.' },
+    "timeline": [
+      {
+        "id": "tl-3-1",
+        "title": "Report submitted",
+        "timestamp": "2026-07-29T19:48:59.896Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      }
     ]
   },
-  // DELHI - Garbage
   {
-    id: 'CIV-10523',
-    title: 'Illegal Garbage Dumping',
-    type: 'Garbage accumulation',
-    originalLanguage: 'hi',
-    originalDescription: 'सड़क के किनारे बहुत सारा कचरा फेंका गया है। बदबू बहुत आ रही है।',
-    description: 'A lot of garbage has been dumped on the side of the road. It smells very bad.',
-    location: 'Lajpat Nagar Market, Ring Road',
-    ward: 'Ward 14',
-    city: 'Delhi',
-    state: 'Delhi',
-    authority: 'Municipal Corporation of Delhi (MCD)',
-    lat: 28.5677,
-    lng: 77.2433,
-    status: 'In Progress',
-    priority: 'Medium',
-    department: 'Sanitation',
-    reportedAt: pastDate(2),
-    updatedAt: pastDate(1),
-    reportsCount: 12,
-    aiConfidence: 95,
-    assignee: 'Sanitation Squad South',
-    slaHours: 48,
-    slaRemaining: '5h 20m',
-    images: { 
-      before: 'https://loremflickr.com/400/300/garbage,street?lock=10523' 
+    "id": "CIV-10404",
+    "title": "Damaged footpath",
+    "type": "Damaged footpath",
+    "originalLanguage": "hi",
+    "originalDescription": "???? ?? ???? ???? ?? ?? ??? ???",
+    "description": "This is a reported issue regarding damaged footpath. Garbage has accumulated for days and is smelling bad.",
+    "location": "Street 66, Delhi",
+    "ward": "Ward 141",
+    "city": "Delhi",
+    "state": "Delhi",
+    "authority": "Municipal Corporation",
+    "lat": 13.081443179228044,
+    "lng": 80.21367454368085,
+    "status": "Closed",
+    "priority": "Critical",
+    "department": "Water",
+    "reportedAt": "2026-08-25T00:51:43.529Z",
+    "updatedAt": "2026-08-28T02:31:08.182Z",
+    "reportsCount": 4,
+    "aiConfidence": 93,
+    "assignee": "Team H",
+    "slaHours": 24,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
     },
-    privacyProcessed: true,
-    timeline: [
-      { id: 't1', title: 'Report submitted', timestamp: pastDate(2), status: 'Submitted', description: 'Citizen reported garbage.' },
-      { id: 't2', title: 'Assigned', timestamp: pastDate(1.5), status: 'Assigned', description: 'Assigned to MCD Sanitation.' },
-      { id: 't3', title: 'In Progress', timestamp: pastDate(1), status: 'In Progress', description: 'Cleaning crew dispatched.' }
+    "timeline": [
+      {
+        "id": "tl-4-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-25T00:51:43.529Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-4-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-25T04:56:14.045Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Parks team."
+      },
+      {
+        "id": "tl-4-3",
+        "title": "Work started",
+        "timestamp": "2026-08-25T15:40:58.663Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-4-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-27T17:33:24.206Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      },
+      {
+        "id": "tl-4-5",
+        "title": "Citizen verified",
+        "timestamp": "2026-08-28T02:31:08.182Z",
+        "status": "Closed",
+        "actor": "Citizen",
+        "action": "Resolution confirmed",
+        "description": "Citizen confirmed the resolution.",
+        "notes": "Issue permanently closed."
+      }
     ]
   },
-  // MUMBAI - Waterlogging
   {
-    id: 'CIV-10534',
-    title: 'Severe Waterlogging',
-    type: 'Road flooding',
-    originalLanguage: 'hi',
-    originalDescription: 'पूरी सड़क पानी से भर गई है, गाड़ियां नहीं जा पा रही हैं।',
-    description: 'The entire road is flooded, vehicles cannot pass through.',
-    location: 'Andheri West, Linking Road',
-    ward: 'Ward K/W',
-    city: 'Mumbai',
-    state: 'Maharashtra',
-    authority: 'Brihanmumbai Municipal Corporation (BMC)',
-    lat: 19.1363,
-    lng: 72.8277,
-    status: 'Under Review',
-    priority: 'Critical',
-    department: 'Drainage',
-    reportedAt: pastDate(0, 3),
-    updatedAt: pastDate(0, 1),
-    reportsCount: 52,
-    aiConfidence: 99,
-    assignee: 'Stormwater Mgmt Cell',
-    slaHours: 6,
-    slaRemaining: '3h 10m',
-    images: { 
-      before: 'https://loremflickr.com/400/300/flood,road?lock=10534' 
+    "id": "CIV-10405",
+    "title": "Garbage accumulation",
+    "type": "Garbage accumulation",
+    "originalLanguage": "en",
+    "originalDescription": "Garbage has accumulated for days and is smelling bad.",
+    "description": "This is a reported issue regarding garbage accumulation. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 66, Kolkata",
+    "ward": "Ward 50",
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "authority": "Municipal Corporation",
+    "lat": 13.077421768563989,
+    "lng": 80.24774598512857,
+    "status": "Resolved",
+    "priority": "Low",
+    "department": "Parks",
+    "reportedAt": "2026-08-10T20:27:56.499Z",
+    "updatedAt": "2026-08-13T05:38:11.820Z",
+    "reportsCount": 3,
+    "aiConfidence": 91,
+    "assignee": "Team V",
+    "slaHours": 72,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
     },
-    privacyProcessed: false,
-    timeline: [
-      { id: 't1', title: 'Report submitted', timestamp: pastDate(0, 3), status: 'Submitted', description: 'Citizen reported flooding.' },
-      { id: 't2', title: 'Under Review', timestamp: pastDate(0, 1), status: 'Under Review', description: 'Escalated due to high report volume.' }
+    "timeline": [
+      {
+        "id": "tl-5-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-10T20:27:56.499Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-5-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-10T22:29:36.820Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Sanitation team."
+      },
+      {
+        "id": "tl-5-3",
+        "title": "Work started",
+        "timestamp": "2026-08-11T09:43:18.296Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-5-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-13T05:38:11.820Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      }
     ]
   },
-  // HYDERABAD - Streetlight
   {
-    id: 'CIV-10545',
-    title: 'Broken Streetlights',
-    type: 'Broken streetlight',
-    originalLanguage: 'en',
-    originalDescription: 'Entire stretch of streetlights is not working since 3 days. Very dark and unsafe.',
-    description: 'Entire stretch of streetlights is not working since 3 days. Very dark and unsafe.',
-    location: 'Banjara Hills Road No. 12',
-    ward: 'Ward 92',
-    city: 'Hyderabad',
-    state: 'Telangana',
-    authority: 'Greater Hyderabad Municipal Corporation (GHMC)',
-    lat: 17.4156,
-    lng: 78.4347,
-    status: 'Resolved',
-    priority: 'Medium',
-    department: 'Electrical',
-    reportedAt: pastDate(4),
-    updatedAt: pastDate(1),
-    reportsCount: 5,
-    aiConfidence: 88,
-    assignee: 'Electrical Maintenance Div 3',
-    slaHours: 72,
-    slaRemaining: 'Completed',
-    images: { 
-      before: 'https://loremflickr.com/400/300/streetlight?lock=10545',
-      after: 'https://loremflickr.com/400/300/streetlight?lock=10545' 
+    "id": "CIV-10406",
+    "title": "Fallen tree",
+    "type": "Fallen tree",
+    "originalLanguage": "ta",
+    "originalDescription": "????????? ??????? ???????? ????? ???? ??????.",
+    "description": "This is a reported issue regarding fallen tree. There is a large pothole near the bus stop.",
+    "location": "Street 87, Ahmedabad",
+    "ward": "Ward 102",
+    "city": "Ahmedabad",
+    "state": "Gujarat",
+    "authority": "Public Works Department",
+    "lat": 13.088563301425724,
+    "lng": 80.26363631768957,
+    "status": "Closed",
+    "priority": "Medium",
+    "department": "Parks",
+    "reportedAt": "2026-08-21T01:19:01.274Z",
+    "updatedAt": "2026-08-22T10:06:21.628Z",
+    "reportsCount": 4,
+    "aiConfidence": 91,
+    "assignee": "Team D",
+    "slaHours": 48,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
     },
-    privacyProcessed: false,
-    timeline: [
-      { id: 't1', title: 'Report submitted', timestamp: pastDate(4), status: 'Submitted', description: 'Reported by citizen.' },
-      { id: 't2', title: 'Resolved', timestamp: pastDate(1), status: 'Resolved', description: 'Bulbs replaced.' }
+    "timeline": [
+      {
+        "id": "tl-6-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-21T01:19:01.274Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-6-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-21T03:13:04.658Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Electrical team."
+      },
+      {
+        "id": "tl-6-3",
+        "title": "Work started",
+        "timestamp": "2026-08-21T12:19:30.383Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-6-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-21T23:27:29.224Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      },
+      {
+        "id": "tl-6-5",
+        "title": "Citizen verified",
+        "timestamp": "2026-08-22T10:06:21.628Z",
+        "status": "Closed",
+        "actor": "Citizen",
+        "action": "Resolution confirmed",
+        "description": "Citizen confirmed the resolution.",
+        "notes": "Issue permanently closed."
+      }
     ]
   },
-  // COIMBATORE - Stray animal
   {
-    id: 'CIV-10556',
-    title: 'Stray Cattle Hazard',
-    type: 'Stray animal hazard',
-    originalLanguage: 'ta',
-    originalDescription: 'சாலை நடுவில் மாடுகள் சுற்றித்திரிகின்றன. போக்குவரத்துக்கு மிகவும் இடையூறாக உள்ளது.',
-    description: 'Cattle wandering in the middle of the road causing traffic disruption.',
-    location: 'Avinashi Road',
-    ward: 'Ward 24',
-    city: 'Coimbatore',
-    state: 'Tamil Nadu',
-    authority: 'Coimbatore City Municipal Corporation (CCMC)',
-    lat: 11.0261,
-    lng: 77.0142,
-    status: 'Assigned',
-    priority: 'Low',
-    department: 'Sanitation',
-    reportedAt: pastDate(0, 5),
-    updatedAt: pastDate(0, 4),
-    reportsCount: 3,
-    aiConfidence: 75,
-    assignee: 'Animal Control',
-    slaHours: 24,
-    slaRemaining: '19h 00m',
-    images: { 
-      before: 'https://loremflickr.com/400/300/cow,cattle?lock=10556' 
+    "id": "CIV-10407",
+    "title": "Open manhole",
+    "type": "Open manhole",
+    "originalLanguage": "en",
+    "originalDescription": "Open manhole posing severe danger to pedestrians.",
+    "description": "This is a reported issue regarding open manhole. The streetlight is broken and the area is completely dark.",
+    "location": "Street 99, Ahmedabad",
+    "ward": "Ward 19",
+    "city": "Ahmedabad",
+    "state": "Gujarat",
+    "authority": "Public Works Department",
+    "lat": 13.072914493406772,
+    "lng": 80.28809307546793,
+    "status": "In Progress",
+    "priority": "High",
+    "department": "Electrical",
+    "reportedAt": "2026-08-20T06:14:56.479Z",
+    "updatedAt": "2026-08-20T14:01:03.770Z",
+    "reportsCount": 4,
+    "aiConfidence": 99,
+    "assignee": "Team K",
+    "slaHours": 48,
+    "slaRemaining": "-6h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
     },
-    privacyProcessed: false,
-    timeline: [
-      { id: 't1', title: 'Report submitted', timestamp: pastDate(0, 5), status: 'Submitted', description: 'Reported by citizen.' },
-      { id: 't2', title: 'Assigned', timestamp: pastDate(0, 4), status: 'Assigned', description: 'Assigned to animal control.' }
+    "timeline": [
+      {
+        "id": "tl-7-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-20T06:14:56.479Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-7-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-20T10:49:01.292Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Drainage team."
+      },
+      {
+        "id": "tl-7-3",
+        "title": "Work started",
+        "timestamp": "2026-08-20T14:01:03.770Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      }
     ]
   },
-  // MADURAI - Fallen Tree
   {
-    id: 'CIV-10567',
-    title: 'Fallen Tree Blocking Road',
-    type: 'Fallen tree',
-    originalLanguage: 'ta',
-    originalDescription: 'மழையால் பெரிய மரம் சாலையில் விழுந்துவிட்டது. போக்குவரத்து பாதிக்கப்பட்டுள்ளது.',
-    description: 'A large tree has fallen on the road due to rain. Traffic is blocked.',
-    location: 'K K Nagar Main Road',
-    ward: 'Ward 45',
-    city: 'Madurai',
-    state: 'Tamil Nadu',
-    authority: 'Madurai Corporation',
-    lat: 9.9329,
-    lng: 78.1361,
-    status: 'In Progress',
-    priority: 'Critical',
-    department: 'Parks',
-    reportedAt: pastDate(0, 1),
-    updatedAt: pastDate(0, 0.5),
-    reportsCount: 15,
-    aiConfidence: 94,
-    assignee: 'Disaster Relief Team',
-    slaHours: 4,
-    slaRemaining: '3h 00m',
-    images: { 
-      before: 'https://loremflickr.com/400/300/fallen,tree,road?lock=10567' 
+    "id": "CIV-10408",
+    "title": "Road debris",
+    "type": "Road debris",
+    "originalLanguage": "en",
+    "originalDescription": "Garbage has accumulated for days and is smelling bad.",
+    "description": "This is a reported issue regarding road debris. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 63, Pune",
+    "ward": "Ward 132",
+    "city": "Pune",
+    "state": "Maharashtra",
+    "authority": "Public Works Department",
+    "lat": 13.016023849934477,
+    "lng": 80.22927763998283,
+    "status": "Closed",
+    "priority": "Low",
+    "department": "Water",
+    "reportedAt": "2026-08-05T14:26:33.303Z",
+    "updatedAt": "2026-08-09T00:13:02.348Z",
+    "reportsCount": 4,
+    "aiConfidence": 94,
+    "assignee": "Team I",
+    "slaHours": 48,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
     },
-    privacyProcessed: false,
-    timeline: [
-      { id: 't1', title: 'Report submitted', timestamp: pastDate(0, 1), status: 'Submitted', description: 'Reported by citizen.' },
-      { id: 't2', title: 'In Progress', timestamp: pastDate(0, 0.5), status: 'In Progress', description: 'Team dispatched with equipment.' }
+    "timeline": [
+      {
+        "id": "tl-8-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-05T14:26:33.303Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-8-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-05T16:21:13.493Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Electrical team."
+      },
+      {
+        "id": "tl-8-3",
+        "title": "Work started",
+        "timestamp": "2026-08-06T03:54:12.998Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-8-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-08T06:01:42.042Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      },
+      {
+        "id": "tl-8-5",
+        "title": "Citizen verified",
+        "timestamp": "2026-08-09T00:13:02.348Z",
+        "status": "Closed",
+        "actor": "Citizen",
+        "action": "Resolution confirmed",
+        "description": "Citizen confirmed the resolution.",
+        "notes": "Issue permanently closed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10409",
+    "title": "Road flooding",
+    "type": "Road flooding",
+    "originalLanguage": "hi",
+    "originalDescription": "????? ?? ??? ???? ?? ?? ???? ????? ???",
+    "description": "This is a reported issue regarding road flooding. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 35, Delhi",
+    "ward": "Ward 125",
+    "city": "Delhi",
+    "state": "Delhi",
+    "authority": "Municipal Corporation",
+    "lat": 13.0786547066052,
+    "lng": 80.24823524576625,
+    "status": "Submitted",
+    "priority": "Critical",
+    "department": "Electrical",
+    "reportedAt": "2026-08-14T22:41:29.237Z",
+    "updatedAt": "2026-08-14T22:41:29.237Z",
+    "reportsCount": 4,
+    "aiConfidence": 85,
+    "assignee": "Team X",
+    "slaHours": 72,
+    "slaRemaining": "27h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-9-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-14T22:41:29.237Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10410",
+    "title": "Broken streetlight",
+    "type": "Broken streetlight",
+    "originalLanguage": "hi",
+    "originalDescription": "???? ?? ???? ???? ?? ?? ??? ???",
+    "description": "This is a reported issue regarding broken streetlight. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 60, Chennai",
+    "ward": "Ward 25",
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "authority": "Water Board",
+    "lat": 13.05454719539774,
+    "lng": 80.27475559637955,
+    "status": "Submitted",
+    "priority": "High",
+    "department": "Electrical",
+    "reportedAt": "2026-07-29T15:51:30.384Z",
+    "updatedAt": "2026-07-29T15:51:30.384Z",
+    "reportsCount": 2,
+    "aiConfidence": 83,
+    "assignee": "Team H",
+    "slaHours": 48,
+    "slaRemaining": "35h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-10-1",
+        "title": "Report submitted",
+        "timestamp": "2026-07-29T15:51:30.384Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10411",
+    "title": "Overflowing drain",
+    "type": "Overflowing drain",
+    "originalLanguage": "ta",
+    "originalDescription": "????????? ??????? ???????? ????? ???? ??????.",
+    "description": "This is a reported issue regarding overflowing drain. Garbage has accumulated for days and is smelling bad.",
+    "location": "Street 61, Surat",
+    "ward": "Ward 124",
+    "city": "Surat",
+    "state": "Gujarat",
+    "authority": "Public Works Department",
+    "lat": 13.005506124742105,
+    "lng": 80.22108501669842,
+    "status": "Resolved",
+    "priority": "Low",
+    "department": "Drainage",
+    "reportedAt": "2026-08-23T14:24:53.935Z",
+    "updatedAt": "2026-08-25T20:20:11.368Z",
+    "reportsCount": 4,
+    "aiConfidence": 96,
+    "assignee": "Team J",
+    "slaHours": 72,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-11-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-23T14:24:53.935Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-11-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-23T19:46:53.252Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Roads team."
+      },
+      {
+        "id": "tl-11-3",
+        "title": "Work started",
+        "timestamp": "2026-08-23T22:37:50.377Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-11-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-25T20:20:11.368Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10412",
+    "title": "Open manhole",
+    "type": "Open manhole",
+    "originalLanguage": "en",
+    "originalDescription": "Open manhole posing severe danger to pedestrians.",
+    "description": "This is a reported issue regarding open manhole. Garbage has accumulated for days and is smelling bad.",
+    "location": "Street 17, Jaipur",
+    "ward": "Ward 4",
+    "city": "Jaipur",
+    "state": "Rajasthan",
+    "authority": "Water Board",
+    "lat": 13.03193493764751,
+    "lng": 80.20827577903299,
+    "status": "In Progress",
+    "priority": "Medium",
+    "department": "Water",
+    "reportedAt": "2026-08-13T14:53:16.157Z",
+    "updatedAt": "2026-08-14T04:31:20.091Z",
+    "reportsCount": 4,
+    "aiConfidence": 93,
+    "assignee": "Team Z",
+    "slaHours": 72,
+    "slaRemaining": "-3h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-12-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-13T14:53:16.157Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-12-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-13T20:24:35.937Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Parks team."
+      },
+      {
+        "id": "tl-12-3",
+        "title": "Work started",
+        "timestamp": "2026-08-14T04:31:20.091Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10413",
+    "title": "Water leakage",
+    "type": "Water leakage",
+    "originalLanguage": "hi",
+    "originalDescription": "?? ????? ?? ???? ???? ????? ??? ???",
+    "description": "This is a reported issue regarding water leakage. The streetlight is broken and the area is completely dark.",
+    "location": "Street 93, Mumbai",
+    "ward": "Ward 102",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "authority": "Water Board",
+    "lat": 13.041552842359227,
+    "lng": 80.27843484171159,
+    "status": "In Progress",
+    "priority": "Critical",
+    "department": "Roads",
+    "reportedAt": "2026-08-06T06:53:30.732Z",
+    "updatedAt": "2026-08-06T16:57:45.143Z",
+    "reportsCount": 3,
+    "aiConfidence": 80,
+    "assignee": "Team L",
+    "slaHours": 24,
+    "slaRemaining": "-2h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-13-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-06T06:53:30.732Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-13-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-06T08:19:14.417Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Parks team."
+      },
+      {
+        "id": "tl-13-3",
+        "title": "Work started",
+        "timestamp": "2026-08-06T16:57:45.143Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10414",
+    "title": "Damaged footpath",
+    "type": "Damaged footpath",
+    "originalLanguage": "hi",
+    "originalDescription": "????? ?? ??? ???? ?? ?? ???? ????? ???",
+    "description": "This is a reported issue regarding damaged footpath. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 11, Surat",
+    "ward": "Ward 91",
+    "city": "Surat",
+    "state": "Gujarat",
+    "authority": "Public Works Department",
+    "lat": 13.00330400456024,
+    "lng": 80.26104433526426,
+    "status": "Resolved",
+    "priority": "High",
+    "department": "Water",
+    "reportedAt": "2026-08-07T21:15:02.260Z",
+    "updatedAt": "2026-08-09T23:17:51.983Z",
+    "reportsCount": 3,
+    "aiConfidence": 81,
+    "assignee": "Team E",
+    "slaHours": 48,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-14-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-07T21:15:02.260Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-14-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-07T22:34:44.615Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Electrical team."
+      },
+      {
+        "id": "tl-14-3",
+        "title": "Work started",
+        "timestamp": "2026-08-08T04:28:51.740Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-14-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-09T23:17:51.983Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10415",
+    "title": "Road debris",
+    "type": "Road debris",
+    "originalLanguage": "hi",
+    "originalDescription": "?? ????? ?? ???? ???? ????? ??? ???",
+    "description": "This is a reported issue regarding road debris. The streetlight is broken and the area is completely dark.",
+    "location": "Street 70, Pune",
+    "ward": "Ward 97",
+    "city": "Pune",
+    "state": "Maharashtra",
+    "authority": "Water Board",
+    "lat": 13.038362829987133,
+    "lng": 80.28255559329125,
+    "status": "Assigned",
+    "priority": "Medium",
+    "department": "Parks",
+    "reportedAt": "2026-08-25T16:15:50.342Z",
+    "updatedAt": "2026-08-25T19:03:28.167Z",
+    "reportsCount": 3,
+    "aiConfidence": 96,
+    "assignee": "Team W",
+    "slaHours": 72,
+    "slaRemaining": "6h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-15-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-25T16:15:50.342Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-15-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-25T19:03:28.167Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Roads team."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10416",
+    "title": "Overflowing drain",
+    "type": "Overflowing drain",
+    "originalLanguage": "en",
+    "originalDescription": "Garbage has accumulated for days and is smelling bad.",
+    "description": "This is a reported issue regarding overflowing drain. Garbage has accumulated for days and is smelling bad.",
+    "location": "Street 50, Ahmedabad",
+    "ward": "Ward 62",
+    "city": "Ahmedabad",
+    "state": "Gujarat",
+    "authority": "Municipal Corporation",
+    "lat": 13.073629841912743,
+    "lng": 80.23741152261931,
+    "status": "Resolved",
+    "priority": "Medium",
+    "department": "Parks",
+    "reportedAt": "2026-08-17T15:59:52.893Z",
+    "updatedAt": "2026-08-18T05:47:37.134Z",
+    "reportsCount": 2,
+    "aiConfidence": 88,
+    "assignee": "Team J",
+    "slaHours": 48,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-16-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-17T15:59:52.893Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-16-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-17T20:19:19.797Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Electrical team."
+      },
+      {
+        "id": "tl-16-3",
+        "title": "Work started",
+        "timestamp": "2026-08-17T23:48:32.430Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-16-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-18T05:47:37.134Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10417",
+    "title": "Pothole",
+    "type": "Pothole",
+    "originalLanguage": "hi",
+    "originalDescription": "??????? ???? ??? ???? ?? ??? ??, ???? ?????? ???",
+    "description": "This is a reported issue regarding pothole. There is a large pothole near the bus stop.",
+    "location": "Street 73, Kolkata",
+    "ward": "Ward 31",
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "authority": "Public Works Department",
+    "lat": 13.026553927975746,
+    "lng": 80.23690355445437,
+    "status": "Resolved",
+    "priority": "Critical",
+    "department": "Electrical",
+    "reportedAt": "2026-08-01T15:40:03.630Z",
+    "updatedAt": "2026-08-03T17:21:15.100Z",
+    "reportsCount": 3,
+    "aiConfidence": 81,
+    "assignee": "Team H",
+    "slaHours": 72,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-17-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-01T15:40:03.630Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-17-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-01T19:03:32.477Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Water team."
+      },
+      {
+        "id": "tl-17-3",
+        "title": "Work started",
+        "timestamp": "2026-08-01T21:24:26.799Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-17-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-03T17:21:15.100Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10418",
+    "title": "Overflowing drain",
+    "type": "Overflowing drain",
+    "originalLanguage": "en",
+    "originalDescription": "There is a large pothole near the bus stop.",
+    "description": "This is a reported issue regarding overflowing drain. The streetlight is broken and the area is completely dark.",
+    "location": "Street 17, Mumbai",
+    "ward": "Ward 51",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "authority": "Water Board",
+    "lat": 13.033044108767358,
+    "lng": 80.24030480312015,
+    "status": "Closed",
+    "priority": "High",
+    "department": "Electrical",
+    "reportedAt": "2026-08-08T17:17:05.786Z",
+    "updatedAt": "2026-08-10T21:34:18.848Z",
+    "reportsCount": 4,
+    "aiConfidence": 91,
+    "assignee": "Team S",
+    "slaHours": 48,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-18-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-08T17:17:05.786Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-18-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-08T20:02:35.970Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Drainage team."
+      },
+      {
+        "id": "tl-18-3",
+        "title": "Work started",
+        "timestamp": "2026-08-09T07:13:01.454Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-18-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-10T02:02:51.367Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      },
+      {
+        "id": "tl-18-5",
+        "title": "Citizen verified",
+        "timestamp": "2026-08-10T21:34:18.848Z",
+        "status": "Closed",
+        "actor": "Citizen",
+        "action": "Resolution confirmed",
+        "description": "Citizen confirmed the resolution.",
+        "notes": "Issue permanently closed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10419",
+    "title": "Garbage accumulation",
+    "type": "Garbage accumulation",
+    "originalLanguage": "hi",
+    "originalDescription": "?? ????? ?? ???? ???? ????? ??? ???",
+    "description": "This is a reported issue regarding garbage accumulation. Garbage has accumulated for days and is smelling bad.",
+    "location": "Street 18, Pune",
+    "ward": "Ward 81",
+    "city": "Pune",
+    "state": "Maharashtra",
+    "authority": "Municipal Corporation",
+    "lat": 13.059762158718604,
+    "lng": 80.29523883180094,
+    "status": "Resolved",
+    "priority": "Low",
+    "department": "Sanitation",
+    "reportedAt": "2026-08-21T07:22:12.436Z",
+    "updatedAt": "2026-08-22T11:24:44.440Z",
+    "reportsCount": 2,
+    "aiConfidence": 80,
+    "assignee": "Team E",
+    "slaHours": 48,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-19-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-21T07:22:12.436Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-19-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-21T10:58:15.977Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Sanitation team."
+      },
+      {
+        "id": "tl-19-3",
+        "title": "Work started",
+        "timestamp": "2026-08-21T20:03:44.522Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-19-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-22T11:24:44.440Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10420",
+    "title": "Stray cattle",
+    "type": "Stray cattle",
+    "originalLanguage": "hi",
+    "originalDescription": "?? ????? ?? ???? ???? ????? ??? ???",
+    "description": "This is a reported issue regarding stray cattle. The streetlight is broken and the area is completely dark.",
+    "location": "Street 69, Mumbai",
+    "ward": "Ward 86",
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "authority": "Municipal Corporation",
+    "lat": 13.006489261449474,
+    "lng": 80.24882113169518,
+    "status": "Submitted",
+    "priority": "Critical",
+    "department": "Sanitation",
+    "reportedAt": "2026-08-20T14:40:37.623Z",
+    "updatedAt": "2026-08-20T14:40:37.623Z",
+    "reportsCount": 3,
+    "aiConfidence": 92,
+    "assignee": "Team B",
+    "slaHours": 24,
+    "slaRemaining": "30h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-20-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-20T14:40:37.623Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10421",
+    "title": "Traffic signal damage",
+    "type": "Traffic signal damage",
+    "originalLanguage": "ta",
+    "originalDescription": "??????? ???? ???????? ?????????????? ????????.",
+    "description": "This is a reported issue regarding traffic signal damage. There is a large pothole near the bus stop.",
+    "location": "Street 72, Ahmedabad",
+    "ward": "Ward 21",
+    "city": "Ahmedabad",
+    "state": "Gujarat",
+    "authority": "Municipal Corporation",
+    "lat": 13.085870325140048,
+    "lng": 80.22440316585478,
+    "status": "In Progress",
+    "priority": "Low",
+    "department": "Water",
+    "reportedAt": "2026-08-11T22:25:44.906Z",
+    "updatedAt": "2026-08-12T08:06:58.171Z",
+    "reportsCount": 3,
+    "aiConfidence": 91,
+    "assignee": "Team T",
+    "slaHours": 72,
+    "slaRemaining": "-1h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-21-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-11T22:25:44.906Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-21-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-12T02:03:16.520Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Drainage team."
+      },
+      {
+        "id": "tl-21-3",
+        "title": "Work started",
+        "timestamp": "2026-08-12T08:06:58.171Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10422",
+    "title": "Stray cattle",
+    "type": "Stray cattle",
+    "originalLanguage": "en",
+    "originalDescription": "Garbage has accumulated for days and is smelling bad.",
+    "description": "This is a reported issue regarding stray cattle. There is a large pothole near the bus stop.",
+    "location": "Street 35, Chennai",
+    "ward": "Ward 88",
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "authority": "Public Works Department",
+    "lat": 13.017052341980222,
+    "lng": 80.22780221474946,
+    "status": "Assigned",
+    "priority": "Medium",
+    "department": "Drainage",
+    "reportedAt": "2026-08-25T18:27:27.230Z",
+    "updatedAt": "2026-08-25T20:22:57.958Z",
+    "reportsCount": 3,
+    "aiConfidence": 81,
+    "assignee": "Team C",
+    "slaHours": 72,
+    "slaRemaining": "13h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-22-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-25T18:27:27.230Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-22-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-25T20:22:57.958Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Parks team."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10423",
+    "title": "Broken streetlight",
+    "type": "Broken streetlight",
+    "originalLanguage": "hi",
+    "originalDescription": "????? ?? ??? ???? ?? ?? ???? ????? ???",
+    "description": "This is a reported issue regarding broken streetlight. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 88, Delhi",
+    "ward": "Ward 108",
+    "city": "Delhi",
+    "state": "Delhi",
+    "authority": "Public Works Department",
+    "lat": 13.07491423459277,
+    "lng": 80.2274699989389,
+    "status": "Assigned",
+    "priority": "Medium",
+    "department": "Parks",
+    "reportedAt": "2026-08-01T19:25:05.228Z",
+    "updatedAt": "2026-08-01T23:52:01.223Z",
+    "reportsCount": 3,
+    "aiConfidence": 96,
+    "assignee": "Team I",
+    "slaHours": 72,
+    "slaRemaining": "-5h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-23-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-01T19:25:05.228Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-23-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-01T23:52:01.223Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Sanitation team."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10424",
+    "title": "Garbage accumulation",
+    "type": "Garbage accumulation",
+    "originalLanguage": "hi",
+    "originalDescription": "?? ????? ?? ???? ???? ????? ??? ???",
+    "description": "This is a reported issue regarding garbage accumulation. There is a large pothole near the bus stop.",
+    "location": "Street 35, Jaipur",
+    "ward": "Ward 17",
+    "city": "Jaipur",
+    "state": "Rajasthan",
+    "authority": "Public Works Department",
+    "lat": 13.061837683616321,
+    "lng": 80.29611486441942,
+    "status": "Closed",
+    "priority": "Critical",
+    "department": "Roads",
+    "reportedAt": "2026-08-01T11:40:45.112Z",
+    "updatedAt": "2026-08-03T13:01:15.889Z",
+    "reportsCount": 2,
+    "aiConfidence": 80,
+    "assignee": "Team N",
+    "slaHours": 48,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-24-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-01T11:40:45.112Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-24-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-01T17:03:45.613Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Parks team."
+      },
+      {
+        "id": "tl-24-3",
+        "title": "Work started",
+        "timestamp": "2026-08-01T19:05:56.616Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-24-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-02T14:14:17.059Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      },
+      {
+        "id": "tl-24-5",
+        "title": "Citizen verified",
+        "timestamp": "2026-08-03T13:01:15.889Z",
+        "status": "Closed",
+        "actor": "Citizen",
+        "action": "Resolution confirmed",
+        "description": "Citizen confirmed the resolution.",
+        "notes": "Issue permanently closed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10425",
+    "title": "Road debris",
+    "type": "Road debris",
+    "originalLanguage": "hi",
+    "originalDescription": "?? ????? ?? ???? ???? ????? ??? ???",
+    "description": "This is a reported issue regarding road debris. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 89, Pune",
+    "ward": "Ward 121",
+    "city": "Pune",
+    "state": "Maharashtra",
+    "authority": "Water Board",
+    "lat": 13.036325995732264,
+    "lng": 80.20243476232605,
+    "status": "In Progress",
+    "priority": "Low",
+    "department": "Water",
+    "reportedAt": "2026-08-18T11:47:49.622Z",
+    "updatedAt": "2026-08-18T20:19:08.561Z",
+    "reportsCount": 5,
+    "aiConfidence": 87,
+    "assignee": "Team O",
+    "slaHours": 48,
+    "slaRemaining": "26h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-25-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-18T11:47:49.622Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-25-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-18T14:46:31.512Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Roads team."
+      },
+      {
+        "id": "tl-25-3",
+        "title": "Work started",
+        "timestamp": "2026-08-18T20:19:08.561Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10426",
+    "title": "Broken streetlight",
+    "type": "Broken streetlight",
+    "originalLanguage": "en",
+    "originalDescription": "The streetlight is broken and the area is completely dark.",
+    "description": "This is a reported issue regarding broken streetlight. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 28, Ahmedabad",
+    "ward": "Ward 37",
+    "city": "Ahmedabad",
+    "state": "Gujarat",
+    "authority": "Water Board",
+    "lat": 13.09768132456765,
+    "lng": 80.22321287483763,
+    "status": "Assigned",
+    "priority": "Low",
+    "department": "Electrical",
+    "reportedAt": "2026-08-09T10:19:20.054Z",
+    "updatedAt": "2026-08-09T12:19:35.849Z",
+    "reportsCount": 5,
+    "aiConfidence": 83,
+    "assignee": "Team W",
+    "slaHours": 48,
+    "slaRemaining": "14h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-26-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-09T10:19:20.054Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-26-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-09T12:19:35.849Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Drainage team."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10427",
+    "title": "Water leakage",
+    "type": "Water leakage",
+    "originalLanguage": "ta",
+    "originalDescription": "????????? ?? ???????? ???????????????.",
+    "description": "This is a reported issue regarding water leakage. The streetlight is broken and the area is completely dark.",
+    "location": "Street 96, Kolkata",
+    "ward": "Ward 61",
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "authority": "Municipal Corporation",
+    "lat": 13.07922758045524,
+    "lng": 80.27233816951988,
+    "status": "Closed",
+    "priority": "Low",
+    "department": "Water",
+    "reportedAt": "2026-08-18T16:33:51.662Z",
+    "updatedAt": "2026-08-20T14:38:36.045Z",
+    "reportsCount": 3,
+    "aiConfidence": 92,
+    "assignee": "Team D",
+    "slaHours": 48,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-27-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-18T16:33:51.662Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-27-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-18T18:07:18.117Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Parks team."
+      },
+      {
+        "id": "tl-27-3",
+        "title": "Work started",
+        "timestamp": "2026-08-19T00:05:29.650Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-27-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-20T09:51:39.912Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      },
+      {
+        "id": "tl-27-5",
+        "title": "Citizen verified",
+        "timestamp": "2026-08-20T14:38:36.045Z",
+        "status": "Closed",
+        "actor": "Citizen",
+        "action": "Resolution confirmed",
+        "description": "Citizen confirmed the resolution.",
+        "notes": "Issue permanently closed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10428",
+    "title": "Open manhole",
+    "type": "Open manhole",
+    "originalLanguage": "en",
+    "originalDescription": "Open manhole posing severe danger to pedestrians.",
+    "description": "This is a reported issue regarding open manhole. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 1, Chennai",
+    "ward": "Ward 115",
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "authority": "Water Board",
+    "lat": 13.090716714497074,
+    "lng": 80.26865766022605,
+    "status": "Closed",
+    "priority": "Critical",
+    "department": "Electrical",
+    "reportedAt": "2026-08-09T11:24:23.705Z",
+    "updatedAt": "2026-08-12T08:18:28.394Z",
+    "reportsCount": 5,
+    "aiConfidence": 87,
+    "assignee": "Team B",
+    "slaHours": 72,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-28-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-09T11:24:23.705Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-28-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-09T16:37:31.489Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Electrical team."
+      },
+      {
+        "id": "tl-28-3",
+        "title": "Work started",
+        "timestamp": "2026-08-09T23:01:23.341Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-28-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-11T10:53:16.668Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      },
+      {
+        "id": "tl-28-5",
+        "title": "Citizen verified",
+        "timestamp": "2026-08-12T08:18:28.394Z",
+        "status": "Closed",
+        "actor": "Citizen",
+        "action": "Resolution confirmed",
+        "description": "Citizen confirmed the resolution.",
+        "notes": "Issue permanently closed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10429",
+    "title": "Stray cattle",
+    "type": "Stray cattle",
+    "originalLanguage": "ta",
+    "originalDescription": "??????? ???? ???????? ?????????????? ????????.",
+    "description": "This is a reported issue regarding stray cattle. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 62, Pune",
+    "ward": "Ward 66",
+    "city": "Pune",
+    "state": "Maharashtra",
+    "authority": "Municipal Corporation",
+    "lat": 13.02413658201961,
+    "lng": 80.23211538062444,
+    "status": "Assigned",
+    "priority": "High",
+    "department": "Roads",
+    "reportedAt": "2026-08-11T18:05:41.757Z",
+    "updatedAt": "2026-08-11T21:15:30.789Z",
+    "reportsCount": 1,
+    "aiConfidence": 99,
+    "assignee": "Team E",
+    "slaHours": 72,
+    "slaRemaining": "22h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-29-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-11T18:05:41.757Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-29-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-11T21:15:30.789Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Water team."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10430",
+    "title": "Pothole",
+    "type": "Pothole",
+    "originalLanguage": "ta",
+    "originalDescription": "???? ??????? ??????????, ???????? ??????.",
+    "description": "This is a reported issue regarding pothole. Garbage has accumulated for days and is smelling bad.",
+    "location": "Street 10, Pune",
+    "ward": "Ward 131",
+    "city": "Pune",
+    "state": "Maharashtra",
+    "authority": "Municipal Corporation",
+    "lat": 13.048692771014727,
+    "lng": 80.20629030911195,
+    "status": "Closed",
+    "priority": "Medium",
+    "department": "Sanitation",
+    "reportedAt": "2026-08-21T13:32:18.549Z",
+    "updatedAt": "2026-08-23T11:00:13.458Z",
+    "reportsCount": 1,
+    "aiConfidence": 97,
+    "assignee": "Team S",
+    "slaHours": 72,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-30-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-21T13:32:18.549Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-30-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-21T16:04:54.257Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Roads team."
+      },
+      {
+        "id": "tl-30-3",
+        "title": "Work started",
+        "timestamp": "2026-08-22T02:06:52.273Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-30-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-22T21:10:37.011Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      },
+      {
+        "id": "tl-30-5",
+        "title": "Citizen verified",
+        "timestamp": "2026-08-23T11:00:13.458Z",
+        "status": "Closed",
+        "actor": "Citizen",
+        "action": "Resolution confirmed",
+        "description": "Citizen confirmed the resolution.",
+        "notes": "Issue permanently closed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10431",
+    "title": "Fallen tree",
+    "type": "Fallen tree",
+    "originalLanguage": "en",
+    "originalDescription": "The streetlight is broken and the area is completely dark.",
+    "description": "This is a reported issue regarding fallen tree. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 56, Jaipur",
+    "ward": "Ward 41",
+    "city": "Jaipur",
+    "state": "Rajasthan",
+    "authority": "Water Board",
+    "lat": 13.089938596031365,
+    "lng": 80.24357960721757,
+    "status": "Reopened",
+    "priority": "High",
+    "department": "Drainage",
+    "reportedAt": "2026-08-13T18:05:35.074Z",
+    "updatedAt": "2026-08-15T13:31:56.738Z",
+    "reportsCount": 4,
+    "aiConfidence": 94,
+    "assignee": "Team N",
+    "slaHours": 48,
+    "slaRemaining": "36h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-31-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-13T18:05:35.074Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-31-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-13T20:40:01.772Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Sanitation team."
+      },
+      {
+        "id": "tl-31-3",
+        "title": "Work started",
+        "timestamp": "2026-08-14T03:13:08.304Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-31-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-15T09:20:33.001Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      },
+      {
+        "id": "tl-31-6",
+        "title": "Reopened by Citizen",
+        "timestamp": "2026-08-15T13:31:56.738Z",
+        "status": "Reopened",
+        "actor": "Citizen",
+        "action": "Reopened",
+        "description": "Citizen rejected the resolution.",
+        "notes": "Work was incomplete."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10432",
+    "title": "Fallen tree",
+    "type": "Fallen tree",
+    "originalLanguage": "hi",
+    "originalDescription": "?? ????? ?? ???? ???? ????? ??? ???",
+    "description": "This is a reported issue regarding fallen tree. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 38, Delhi",
+    "ward": "Ward 119",
+    "city": "Delhi",
+    "state": "Delhi",
+    "authority": "Water Board",
+    "lat": 13.051876960955008,
+    "lng": 80.29000135400703,
+    "status": "In Progress",
+    "priority": "Medium",
+    "department": "Electrical",
+    "reportedAt": "2026-08-08T13:07:10.119Z",
+    "updatedAt": "2026-08-09T03:58:24.884Z",
+    "reportsCount": 5,
+    "aiConfidence": 94,
+    "assignee": "Team Z",
+    "slaHours": 72,
+    "slaRemaining": "31h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-32-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-08T13:07:10.119Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-32-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-08T18:20:49.036Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Parks team."
+      },
+      {
+        "id": "tl-32-3",
+        "title": "Work started",
+        "timestamp": "2026-08-09T03:58:24.884Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10433",
+    "title": "Road flooding",
+    "type": "Road flooding",
+    "originalLanguage": "hi",
+    "originalDescription": "???? ?? ???? ???? ?? ?? ??? ???",
+    "description": "This is a reported issue regarding road flooding. There is a large pothole near the bus stop.",
+    "location": "Street 40, Chennai",
+    "ward": "Ward 12",
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "authority": "Public Works Department",
+    "lat": 13.034242485881263,
+    "lng": 80.25121253123,
+    "status": "Assigned",
+    "priority": "Low",
+    "department": "Drainage",
+    "reportedAt": "2026-08-24T20:45:29.190Z",
+    "updatedAt": "2026-08-25T01:24:29.923Z",
+    "reportsCount": 5,
+    "aiConfidence": 95,
+    "assignee": "Team C",
+    "slaHours": 24,
+    "slaRemaining": "21h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-33-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-24T20:45:29.190Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-33-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-25T01:24:29.923Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Water team."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10434",
+    "title": "Damaged footpath",
+    "type": "Damaged footpath",
+    "originalLanguage": "en",
+    "originalDescription": "Garbage has accumulated for days and is smelling bad.",
+    "description": "This is a reported issue regarding damaged footpath. Garbage has accumulated for days and is smelling bad.",
+    "location": "Street 75, Surat",
+    "ward": "Ward 139",
+    "city": "Surat",
+    "state": "Gujarat",
+    "authority": "Water Board",
+    "lat": 13.03276461754709,
+    "lng": 80.21980796494032,
+    "status": "Closed",
+    "priority": "High",
+    "department": "Water",
+    "reportedAt": "2026-08-10T16:59:22.343Z",
+    "updatedAt": "2026-08-12T18:57:07.506Z",
+    "reportsCount": 4,
+    "aiConfidence": 97,
+    "assignee": "Team A",
+    "slaHours": 48,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-34-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-10T16:59:22.343Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-34-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-10T21:53:33.771Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Parks team."
+      },
+      {
+        "id": "tl-34-3",
+        "title": "Work started",
+        "timestamp": "2026-08-11T01:42:43.366Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-34-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-11T21:40:13.330Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      },
+      {
+        "id": "tl-34-5",
+        "title": "Citizen verified",
+        "timestamp": "2026-08-12T18:57:07.506Z",
+        "status": "Closed",
+        "actor": "Citizen",
+        "action": "Resolution confirmed",
+        "description": "Citizen confirmed the resolution.",
+        "notes": "Issue permanently closed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10435",
+    "title": "Open manhole",
+    "type": "Open manhole",
+    "originalLanguage": "en",
+    "originalDescription": "There is a large pothole near the bus stop.",
+    "description": "This is a reported issue regarding open manhole. There is a large pothole near the bus stop.",
+    "location": "Street 53, Hyderabad",
+    "ward": "Ward 97",
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "authority": "Public Works Department",
+    "lat": 13.032643573608587,
+    "lng": 80.20642342395354,
+    "status": "In Progress",
+    "priority": "High",
+    "department": "Sanitation",
+    "reportedAt": "2026-08-07T11:13:17.983Z",
+    "updatedAt": "2026-08-07T18:02:36.978Z",
+    "reportsCount": 4,
+    "aiConfidence": 93,
+    "assignee": "Team M",
+    "slaHours": 48,
+    "slaRemaining": "-2h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-35-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-07T11:13:17.983Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-35-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-07T13:47:05.698Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Parks team."
+      },
+      {
+        "id": "tl-35-3",
+        "title": "Work started",
+        "timestamp": "2026-08-07T18:02:36.978Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10436",
+    "title": "Overflowing drain",
+    "type": "Overflowing drain",
+    "originalLanguage": "hi",
+    "originalDescription": "??????? ???? ??? ???? ?? ??? ??, ???? ?????? ???",
+    "description": "This is a reported issue regarding overflowing drain. There is a large pothole near the bus stop.",
+    "location": "Street 58, Kolkata",
+    "ward": "Ward 97",
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "authority": "Water Board",
+    "lat": 13.068044839319606,
+    "lng": 80.25563368788306,
+    "status": "Closed",
+    "priority": "Low",
+    "department": "Drainage",
+    "reportedAt": "2026-07-31T22:32:00.721Z",
+    "updatedAt": "2026-08-02T13:42:15.746Z",
+    "reportsCount": 2,
+    "aiConfidence": 98,
+    "assignee": "Team Q",
+    "slaHours": 72,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-36-1",
+        "title": "Report submitted",
+        "timestamp": "2026-07-31T22:32:00.721Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-36-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-01T03:25:00.873Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Water team."
+      },
+      {
+        "id": "tl-36-3",
+        "title": "Work started",
+        "timestamp": "2026-08-01T10:32:54.285Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-36-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-02T07:57:08.965Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      },
+      {
+        "id": "tl-36-5",
+        "title": "Citizen verified",
+        "timestamp": "2026-08-02T13:42:15.746Z",
+        "status": "Closed",
+        "actor": "Citizen",
+        "action": "Resolution confirmed",
+        "description": "Citizen confirmed the resolution.",
+        "notes": "Issue permanently closed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10437",
+    "title": "Pothole",
+    "type": "Pothole",
+    "originalLanguage": "en",
+    "originalDescription": "The streetlight is broken and the area is completely dark.",
+    "description": "This is a reported issue regarding pothole. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 31, Chennai",
+    "ward": "Ward 51",
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "authority": "Municipal Corporation",
+    "lat": 13.036979224174651,
+    "lng": 80.24646520646269,
+    "status": "Resolved",
+    "priority": "Low",
+    "department": "Parks",
+    "reportedAt": "2026-08-17T08:34:09.096Z",
+    "updatedAt": "2026-08-18T21:33:28.494Z",
+    "reportsCount": 3,
+    "aiConfidence": 98,
+    "assignee": "Team P",
+    "slaHours": 24,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-37-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-17T08:34:09.096Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-37-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-17T12:19:05.412Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Electrical team."
+      },
+      {
+        "id": "tl-37-3",
+        "title": "Work started",
+        "timestamp": "2026-08-17T18:31:09.345Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-37-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-18T21:33:28.494Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10438",
+    "title": "Water leakage",
+    "type": "Water leakage",
+    "originalLanguage": "en",
+    "originalDescription": "There is a large pothole near the bus stop.",
+    "description": "This is a reported issue regarding water leakage. There is a large pothole near the bus stop.",
+    "location": "Street 5, Ahmedabad",
+    "ward": "Ward 135",
+    "city": "Ahmedabad",
+    "state": "Gujarat",
+    "authority": "Municipal Corporation",
+    "lat": 13.060463587688542,
+    "lng": 80.23654148436937,
+    "status": "Resolved",
+    "priority": "Low",
+    "department": "Sanitation",
+    "reportedAt": "2026-08-16T06:52:50.418Z",
+    "updatedAt": "2026-08-17T14:13:32.634Z",
+    "reportsCount": 4,
+    "aiConfidence": 80,
+    "assignee": "Team M",
+    "slaHours": 48,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-38-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-16T06:52:50.418Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-38-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-16T12:34:29.111Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Sanitation team."
+      },
+      {
+        "id": "tl-38-3",
+        "title": "Work started",
+        "timestamp": "2026-08-16T22:00:37.141Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-38-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-17T14:13:32.634Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10439",
+    "title": "Water leakage",
+    "type": "Water leakage",
+    "originalLanguage": "ta",
+    "originalDescription": "??????? ???? ???????? ?????????????? ????????.",
+    "description": "This is a reported issue regarding water leakage. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 59, Bengaluru",
+    "ward": "Ward 134",
+    "city": "Bengaluru",
+    "state": "Karnataka",
+    "authority": "Municipal Corporation",
+    "lat": 13.060142451250416,
+    "lng": 80.2545540342147,
+    "status": "Assigned",
+    "priority": "Low",
+    "department": "Electrical",
+    "reportedAt": "2026-08-22T14:56:37.241Z",
+    "updatedAt": "2026-08-22T19:24:38.733Z",
+    "reportsCount": 5,
+    "aiConfidence": 80,
+    "assignee": "Team U",
+    "slaHours": 72,
+    "slaRemaining": "-3h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-39-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-22T14:56:37.241Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-39-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-22T19:24:38.733Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Drainage team."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10440",
+    "title": "Damaged footpath",
+    "type": "Damaged footpath",
+    "originalLanguage": "en",
+    "originalDescription": "There is a large pothole near the bus stop.",
+    "description": "This is a reported issue regarding damaged footpath. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 45, Kolkata",
+    "ward": "Ward 61",
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "authority": "Public Works Department",
+    "lat": 13.015235374347116,
+    "lng": 80.2322948686462,
+    "status": "Submitted",
+    "priority": "Critical",
+    "department": "Roads",
+    "reportedAt": "2026-08-17T05:59:09.052Z",
+    "updatedAt": "2026-08-17T05:59:09.052Z",
+    "reportsCount": 2,
+    "aiConfidence": 94,
+    "assignee": "Team A",
+    "slaHours": 48,
+    "slaRemaining": "12h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-40-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-17T05:59:09.052Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10441",
+    "title": "Broken streetlight",
+    "type": "Broken streetlight",
+    "originalLanguage": "en",
+    "originalDescription": "There is a large pothole near the bus stop.",
+    "description": "This is a reported issue regarding broken streetlight. There is a large pothole near the bus stop.",
+    "location": "Street 99, Surat",
+    "ward": "Ward 77",
+    "city": "Surat",
+    "state": "Gujarat",
+    "authority": "Municipal Corporation",
+    "lat": 13.000096005949205,
+    "lng": 80.20557273764133,
+    "status": "Resolved",
+    "priority": "Low",
+    "department": "Sanitation",
+    "reportedAt": "2026-08-24T00:01:03.323Z",
+    "updatedAt": "2026-08-24T14:50:31.413Z",
+    "reportsCount": 5,
+    "aiConfidence": 81,
+    "assignee": "Team D",
+    "slaHours": 48,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-41-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-24T00:01:03.323Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-41-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-24T03:19:36.011Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Electrical team."
+      },
+      {
+        "id": "tl-41-3",
+        "title": "Work started",
+        "timestamp": "2026-08-24T10:01:42.356Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-41-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-24T14:50:31.413Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10442",
+    "title": "Road flooding",
+    "type": "Road flooding",
+    "originalLanguage": "hi",
+    "originalDescription": "?? ????? ?? ???? ???? ????? ??? ???",
+    "description": "This is a reported issue regarding road flooding. The streetlight is broken and the area is completely dark.",
+    "location": "Street 24, Jaipur",
+    "ward": "Ward 5",
+    "city": "Jaipur",
+    "state": "Rajasthan",
+    "authority": "Municipal Corporation",
+    "lat": 13.089876030951382,
+    "lng": 80.22144518877111,
+    "status": "Closed",
+    "priority": "Critical",
+    "department": "Electrical",
+    "reportedAt": "2026-08-21T06:18:11.413Z",
+    "updatedAt": "2026-08-23T17:20:11.598Z",
+    "reportsCount": 3,
+    "aiConfidence": 84,
+    "assignee": "Team Z",
+    "slaHours": 24,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-42-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-21T06:18:11.413Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-42-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-21T08:51:07.337Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Parks team."
+      },
+      {
+        "id": "tl-42-3",
+        "title": "Work started",
+        "timestamp": "2026-08-21T12:36:59.198Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-42-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-23T08:08:52.666Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      },
+      {
+        "id": "tl-42-5",
+        "title": "Citizen verified",
+        "timestamp": "2026-08-23T17:20:11.598Z",
+        "status": "Closed",
+        "actor": "Citizen",
+        "action": "Resolution confirmed",
+        "description": "Citizen confirmed the resolution.",
+        "notes": "Issue permanently closed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10443",
+    "title": "Traffic signal damage",
+    "type": "Traffic signal damage",
+    "originalLanguage": "en",
+    "originalDescription": "There is a large pothole near the bus stop.",
+    "description": "This is a reported issue regarding traffic signal damage. There is a large pothole near the bus stop.",
+    "location": "Street 86, Kolkata",
+    "ward": "Ward 56",
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "authority": "Water Board",
+    "lat": 13.06485868972814,
+    "lng": 80.25802204349058,
+    "status": "Submitted",
+    "priority": "Low",
+    "department": "Parks",
+    "reportedAt": "2026-08-18T12:01:45.458Z",
+    "updatedAt": "2026-08-18T12:01:45.458Z",
+    "reportsCount": 2,
+    "aiConfidence": 85,
+    "assignee": "Team D",
+    "slaHours": 48,
+    "slaRemaining": "37h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-43-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-18T12:01:45.458Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10444",
+    "title": "Garbage accumulation",
+    "type": "Garbage accumulation",
+    "originalLanguage": "hi",
+    "originalDescription": "?? ????? ?? ???? ???? ????? ??? ???",
+    "description": "This is a reported issue regarding garbage accumulation. Open manhole posing severe danger to pedestrians.",
+    "location": "Street 40, Surat",
+    "ward": "Ward 147",
+    "city": "Surat",
+    "state": "Gujarat",
+    "authority": "Municipal Corporation",
+    "lat": 13.072359884403673,
+    "lng": 80.20899185994318,
+    "status": "In Progress",
+    "priority": "Low",
+    "department": "Drainage",
+    "reportedAt": "2026-08-06T12:18:49.724Z",
+    "updatedAt": "2026-08-06T16:56:04.167Z",
+    "reportsCount": 2,
+    "aiConfidence": 84,
+    "assignee": "Team D",
+    "slaHours": 48,
+    "slaRemaining": "-6h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-44-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-06T12:18:49.724Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-44-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-06T14:03:45.880Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Water team."
+      },
+      {
+        "id": "tl-44-3",
+        "title": "Work started",
+        "timestamp": "2026-08-06T16:56:04.167Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      }
+    ]
+  },
+  {
+    "id": "CIV-10445",
+    "title": "Open manhole",
+    "type": "Open manhole",
+    "originalLanguage": "hi",
+    "originalDescription": "??????? ???? ??? ???? ?? ??? ??, ???? ?????? ???",
+    "description": "This is a reported issue regarding open manhole. The streetlight is broken and the area is completely dark.",
+    "location": "Street 53, Ahmedabad",
+    "ward": "Ward 57",
+    "city": "Ahmedabad",
+    "state": "Gujarat",
+    "authority": "Public Works Department",
+    "lat": 13.067616125870737,
+    "lng": 80.21205532257586,
+    "status": "Resolved",
+    "priority": "Low",
+    "department": "Parks",
+    "reportedAt": "2026-08-16T13:26:36.605Z",
+    "updatedAt": "2026-08-17T02:06:33.237Z",
+    "reportsCount": 3,
+    "aiConfidence": 95,
+    "assignee": "Team J",
+    "slaHours": 72,
+    "slaRemaining": "0h",
+    "images": {
+      "before": "https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&q=80&w=400"
+    },
+    "timeline": [
+      {
+        "id": "tl-45-1",
+        "title": "Report submitted",
+        "timestamp": "2026-08-16T13:26:36.605Z",
+        "status": "Submitted",
+        "actor": "Citizen",
+        "action": "Report submitted",
+        "description": "Report received by the system.",
+        "notes": "System auto-acknowledged."
+      },
+      {
+        "id": "tl-45-2",
+        "title": "Assigned",
+        "timestamp": "2026-08-16T15:07:29.651Z",
+        "status": "Assigned",
+        "actor": "Officer",
+        "action": "Assigned",
+        "description": "Issue assigned to department.",
+        "notes": "Assigned to Parks team."
+      },
+      {
+        "id": "tl-45-3",
+        "title": "Work started",
+        "timestamp": "2026-08-16T21:20:44.721Z",
+        "status": "In Progress",
+        "actor": "Field Team",
+        "action": "Work started",
+        "description": "Team has arrived and started work.",
+        "notes": "Materials deployed."
+      },
+      {
+        "id": "tl-45-4",
+        "title": "Work completed",
+        "timestamp": "2026-08-17T02:06:33.237Z",
+        "status": "Resolved",
+        "actor": "Field Team",
+        "action": "Work completed",
+        "description": "Physical work has been completed.",
+        "notes": "Awaiting citizen verification."
+      }
     ]
   }
 ];
-
-// Add more dynamically to reach around 30 canonical issues
-
-const CITIES = ['Chennai', 'Bengaluru', 'New Delhi', 'Mumbai', 'Hyderabad', 'Kolkata', 'Pune', 'Ahmedabad', 'Ludhiana', 'Meerut', 'Faribabad', 'Gwalior', 'Kota', 'Surat'];
-
-const CITY_LOCATIONS: Record<string, { lat: number, lng: number, address: string[], authority: string, state: string, weight: number }> = {
-  'Chennai': { state: 'Tamil Nadu', lat: 13.0827, lng: 80.2707, address: ['Anna Salai', 'OMR'], authority: 'Greater Chennai Corporation', weight: 40 },
-  'Bengaluru': { state: 'Karnataka', lat: 12.9716, lng: 77.5946, address: ['Outer Ring Road', 'M.G. Road'], authority: 'BBMP', weight: 150 },
-  'New Delhi': { state: 'Delhi', lat: 28.6139, lng: 77.2090, address: ['Ring Road', 'Connaught Place'], authority: 'NDMC', weight: 180 },
-  'Mumbai': { state: 'Maharashtra', lat: 19.0760, lng: 72.8777, address: ['Western Express Highway', 'Bandra'], authority: 'BMC', weight: 160 },
-  'Hyderabad': { state: 'Telangana', lat: 17.3850, lng: 78.4867, address: ['Banjara Hills', 'Hitec City'], authority: 'GHMC', weight: 25 },
-  'Kolkata': { state: 'West Bengal', lat: 22.5726, lng: 88.3639, address: ['Park Street', 'Salt Lake'], authority: 'KMC', weight: 20 },
-  'Pune': { state: 'Maharashtra', lat: 18.5204, lng: 73.8567, address: ['MG Road', 'Hinjewadi'], authority: 'PMC', weight: 15 },
-  'Ahmedabad': { state: 'Gujarat', lat: 23.0225, lng: 72.5714, address: ['SG Highway'], authority: 'AMC', weight: 15 },
-  'Ludhiana': { state: 'Punjab', lat: 30.9009, lng: 75.8572, address: ['Ferozepur Road'], authority: 'LMC', weight: 90 },
-  'Meerut': { state: 'Uttar Pradesh', lat: 28.9844, lng: 77.7064, address: ['Abu Lane'], authority: 'MMC', weight: 80 },
-  'Faribabad': { state: 'Haryana', lat: 28.4089, lng: 77.3177, address: ['NIT'], authority: 'FMC', weight: 80 },
-  'Gwalior': { state: 'Madhya Pradesh', lat: 26.2124, lng: 78.1772, address: ['Lashkar'], authority: 'GMC', weight: 80 },
-  'Kota': { state: 'Rajasthan', lat: 25.2138, lng: 75.8647, address: ['Talwandi'], authority: 'KMC', weight: 80 },
-  'Surat': { state: 'Gujarat', lat: 21.1702, lng: 72.8310, address: ['Adajan'], authority: 'SMC', weight: 110 }
-};
-
-const AUTHORITIES = ['GCC', 'BBMP', 'MCD', 'BMC', 'GHMC', 'CCMC', 'Madurai Corporation', 'CMWSSB', 'State Highways PWD'];
-const DEPARTMENTS: ('Roads' | 'Sanitation' | 'Electrical' | 'Drainage' | 'Water' | 'Parks' | 'Unassigned')[] = ['Roads', 'Sanitation', 'Electrical', 'Drainage', 'Water', 'Parks', 'Unassigned'];
-const typeToKeyword: Record<string, string> = {
-  "Pothole": "pothole,road",
-  "Garbage accumulation": "garbage,street",
-  "Overflowing drain": "drain,water",
-  "Broken streetlight": "streetlight",
-  "Damaged footpath": "sidewalk,broken",
-  "Water leakage": "water,leak",
-  "Damaged traffic signal": "trafficlight",
-  "Public toilet maintenance": "public,toilet",
-  "Road debris": "debris,road",
-  "Open Manhole": "manhole",
-  "Road flooding": "flood,road",
-  "Stray animal hazard": "stray,dog",
-  "Fallen tree": "fallen,tree,road"
-};
-
-const TYPES = ['Pothole', 'Garbage accumulation', 'Overflowing drain', 'Broken streetlight', 'Damaged footpath', 'Water leakage', 'Damaged traffic signal', 'Public toilet maintenance', 'Road debris'];
-
-
-
-const weightedCities: string[] = [];
-for (const city of Object.keys(CITY_LOCATIONS)) {
-  for (let w = 0; w < CITY_LOCATIONS[city].weight; w++) {
-    weightedCities.push(city);
-  }
-}
-
-for (let i = 0; i < 250; i++) {
-  const city = weightedCities[Math.floor(Math.random() * weightedCities.length)];
-  const locationData = CITY_LOCATIONS[city];
-  const authority = locationData.authority;
-  const address = locationData.address[Math.floor(Math.random() * locationData.address.length)];
-  
-  // Create a realistic cluster spread: most within 0.05 deg, some within 0.15 deg
-  const spread = Math.random() > 0.8 ? 0.15 : 0.05;
-  const lat = locationData.lat + (Math.random() - 0.5) * spread;
-  const lng = locationData.lng + (Math.random() - 0.5) * spread;
-
-  const department = DEPARTMENTS[Math.floor(Math.random() * DEPARTMENTS.length)];
-  const type = TYPES[Math.floor(Math.random() * TYPES.length)];
-
-  
-  const statusPool: Issue['status'][] = ['Submitted', 'Under Review', 'Assigned', 'In Progress', 'Resolved', 'Awaiting Verification', 'Closed'];
-  const status = statusPool[Math.floor(Math.random() * statusPool.length)];
-  
-  const priorityPool: Issue['priority'][] = ['Low', 'Medium', 'High', 'Critical'];
-  const priority = priorityPool[Math.floor(Math.random() * priorityPool.length)];
-  
-  const randomBeforeImg = `https://loremflickr.com/400/300/${typeToKeyword[type] || 'city'}?lock=${10600 + i}`;
-  const randomAfterImg = `https://loremflickr.com/400/300/${typeToKeyword[type] || 'city'}?lock=${10600 + i}`;
-  
-  MOCK_ISSUES.push({
-    id: `CIV-106${i.toString().padStart(2, '0')}`,
-    title: `${type} in ${city}`,
-    type: type,
-    originalLanguage: Math.random() > 0.5 ? 'en' : (Math.random() > 0.5 ? 'hi' : 'ta'),
-    originalDescription: `Issue reported regarding ${type}. Needs attention.`,
-    description: `Issue reported regarding ${type}. Needs attention.`,
-    location: `${address}, ${city}`,
-    ward: `Ward ${Math.floor(Math.random() * 200)}`,
-    city: city,
-    state: CITY_LOCATIONS[city].state,
-    authority: authority,
-    lat: lat,
-    lng: lng,
-    status: status,
-    priority: priority,
-    department: department,
-    reportedAt: pastDate(Math.floor(Math.random() * 10), Math.floor(Math.random() * 24)),
-    updatedAt: pastDate(Math.floor(Math.random() * 2), Math.floor(Math.random() * 10)),
-    reportsCount: Math.floor(Math.random() * (locationData.weight > 20 ? 80 : 30)) + 1,
-    aiConfidence: 70 + Math.floor(Math.random() * 30),
-    assignee: status === 'Submitted' ? 'Unassigned' : `Team ${Math.floor(Math.random() * 10)}`,
-    slaHours: 24 * (Math.floor(Math.random() * 3) + 1),
-    slaRemaining: status === 'Resolved' || status === 'Closed' ? 'Completed' : `${Math.floor(Math.random() * 20)}h`,
-    images: { 
-      before: randomBeforeImg,
-      ...(['Resolved', 'Awaiting Verification', 'Closed'].includes(status) ? {after: randomAfterImg} : {})
-    },
-    privacyProcessed: true,
-    timeline: [
-      { id: `t1-${i}`, title: 'Report submitted', timestamp: pastDate(5), status: 'Submitted', description: 'Citizen reported' }
-    ]
-  });
-}
-

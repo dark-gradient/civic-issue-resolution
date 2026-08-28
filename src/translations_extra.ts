@@ -1,0 +1,112 @@
+﻿
+export const notificationTranslations = {
+  en: {
+    status_submitted: "Your report has been successfully submitted.",
+    status_received: "Your report has been received by the authorities.",
+    status_assigned: "Your issue has been assigned to the responsible department.",
+    status_in_progress: "Work has started on your reported issue.",
+    status_resolved: "Work has been completed. Please verify the resolution.",
+    status_closed: "Issue closed successfully. Thank you!",
+    status_reopened: "Issue has been reopened and escalated.",
+    error_submit: "Error submitting report to backend.",
+    error_auth: "Authentication failed. Please try again.",
+    verify_identity: "Identity verification completed.",
+    demo_otp_sent: "OTP sent to your mobile number (Demo)"
+  },
+  ta: {
+    status_submitted: "உங்கள் புகார் வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது.",
+    status_received: "உங்கள் புகாரை அதிகாரிகள் பெற்றுள்ளனர்.",
+    status_assigned: "உங்கள் பிரச்சனை சம்பந்தப்பட்ட துறைக்கு ஒதுக்கப்பட்டுள்ளது.",
+    status_in_progress: "நீங்கள் தெரிவித்த பிரச்சனையில் வேலை தொடங்கப்பட்டுள்ளது.",
+    status_resolved: "பணிகள் நிறைவடைந்துள்ளன. தயவுசெய்து சரிபார்க்கவும்.",
+    status_closed: "பிரச்சனை வெற்றிகரமாக மூடப்பட்டது. நன்றி!",
+    status_reopened: "பிரச்சனை மீண்டும் திறக்கப்பட்டு, அதிகாரிகளுக்கு அனுப்பப்பட்டுள்ளது.",
+    error_submit: "புகாரை சமர்ப்பிப்பதில் பிழை.",
+    error_auth: "அங்கீகாரம் தோல்வியடைந்தது. மீண்டும் முயற்சிக்கவும்.",
+    verify_identity: "அடையாள சரிபார்ப்பு முடிந்தது.",
+    demo_otp_sent: "உங்கள் மொபைல் எண்ணுக்கு OTP அனுப்பப்பட்டது (Demo)"
+  },
+  hi: {
+    status_submitted: "आपकी शिकायत सफलतापूर्वक सबमिट कर दी गई है।",
+    status_received: "अधिकारियों को आपकी शिकायत मिल गई है।",
+    status_assigned: "आपकी समस्या संबंधित विभाग को सौंप दी गई है।",
+    status_in_progress: "आपकी बताई गई समस्या पर काम शुरू हो गया है।",
+    status_resolved: "काम पूरा हो गया है। कृपया समाधान की पुष्टि करें।",
+    status_closed: "समस्या सफलतापूर्वक बंद कर दी गई है। धन्यवाद!",
+    status_reopened: "समस्या फिर से खोल दी गई है और आगे भेज दी गई है।",
+    error_submit: "शिकायत सबमिट करने में त्रुटि।",
+    error_auth: "प्रमाणीकरण विफल रहा। कृपया पुनः प्रयास करें।",
+    verify_identity: "पहचान सत्यापन पूरा हुआ।",
+    demo_otp_sent: "आपके मोबाइल नंबर पर OTP भेज दिया गया है (Demo)"
+  }
+};
+
+export const govTranslations = {
+  en: {
+    nav_overview: "Overview",
+    nav_live_map: "Live Map",
+    nav_issue_queue: "Issue Queue",
+    nav_analytics: "Analytics",
+    kpi_active_issues: "Active Issues",
+    kpi_critical: "Critical / High",
+    kpi_reopened: "Reopened by Citizen",
+    kpi_sla_breach: "SLA Breaching",
+    avg_resolution: "Avg Resolution Time",
+    avg_response: "Avg Response Time",
+    search_placeholder: "Search ID, City, Type, Desc...",
+    filter_all: "All Languages",
+    filter_en: "English",
+    filter_ta: "Tamil",
+    filter_hi: "Hindi",
+    reports_by_lang: "Reports by Language",
+    demo_data_notice: "Demo Data",
+    assigned: "Assigned",
+    in_progress: "In Progress",
+    resolved: "Resolved"
+  },
+  ta: {
+    nav_overview: "கண்ணோட்டம்",
+    nav_live_map: "நேரடி வரைபடம்",
+    nav_issue_queue: "பிரச்சனை வரிசை",
+    nav_analytics: "பகுப்பாய்வு",
+    kpi_active_issues: "செயலில் உள்ளவை",
+    kpi_critical: "முக்கியமானவை",
+    kpi_reopened: "மீண்டும் திறக்கப்பட்டவை",
+    kpi_sla_breach: "SLA மீறல்கள்",
+    avg_resolution: "சராசரி தீர்வு நேரம்",
+    avg_response: "சராசரி பதில் நேரம்",
+    search_placeholder: "தேடு...",
+    filter_all: "அனைத்து மொழிகளும்",
+    filter_en: "ஆங்கிலம்",
+    filter_ta: "தமிழ்",
+    filter_hi: "இந்தி",
+    reports_by_lang: "மொழி வாரியாக புகார்கள்",
+    demo_data_notice: "மாதிரி தரவு",
+    assigned: "ஒதுக்கப்பட்டது",
+    in_progress: "நடவடிக்கையில்",
+    resolved: "தீர்க்கப்பட்டது"
+  },
+  hi: {
+    nav_overview: "अवलोकन",
+    nav_live_map: "लाइव मैप",
+    nav_issue_queue: "समस्या कतार",
+    nav_analytics: "एनालिटिक्स",
+    kpi_active_issues: "सक्रिय समस्याएं",
+    kpi_critical: "महत्वपूर्ण",
+    kpi_reopened: "फिर से खोला गया",
+    kpi_sla_breach: "SLA उल्लंघन",
+    avg_resolution: "औसत समाधान समय",
+    avg_response: "औसत प्रतिक्रिया समय",
+    search_placeholder: "खोजें...",
+    filter_all: "सभी भाषाएँ",
+    filter_en: "अंग्रेज़ी",
+    filter_ta: "तमिल",
+    filter_hi: "हिंदी",
+    reports_by_lang: "भाषा के अनुसार रिपोर्ट",
+    demo_data_notice: "डेमो डेटा",
+    assigned: "सौंपा गया",
+    in_progress: "प्रगति पर",
+    resolved: "हल हो गया"
+  }
+};
+

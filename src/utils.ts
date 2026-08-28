@@ -35,3 +35,21 @@ export const filterIssuesBySearch = (issues: any[], search: string) => {
     i.description.toLowerCase().includes(q)
   );
 };
+
+export function formatDuration(ms: number) {
+  if (ms < 0) return '0m';
+  const hours = Math.floor(ms / (1000 * 60 * 60));
+  const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
+  const days = Math.floor(hours / 24);
+  
+  if (days > 0) return `${days}d ${hours % 24}h`;
+  if (hours > 0) return `${hours}h ${minutes}m`;
+  return `${minutes}m`;
+}
+
+export function calculateResolutionTime(issue: any): number | null {
+  if (issue.status !== 'Resolved' && issue.status !== 'Closed') return null;
+  const start = new Date(issue.reportedAt).getTime();
+  const end = new Date(issue.updatedAt).getTime(); // Assumes updatedAt is the final closure time
+  return end - start;
+}

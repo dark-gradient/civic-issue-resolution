@@ -47,6 +47,9 @@ export interface TimelineEvent {
   timestamp: string;
   status: string;
   description: string;
+  actor?: string;
+  action?: string;
+  notes?: string;
 }
 
 export interface Issue {

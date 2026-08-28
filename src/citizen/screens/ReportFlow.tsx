@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Camera, MapPin, Mic, Send, Edit2, AlertTriangle, CheckCircle, Upload, ShieldCheck, Info } from 'lucide-react';
 import { ReportService } from '../../services/api';
 import { useApp } from '../../context/AppContext';
+import { translations, LanguageCode } from '../../translations';
+import { notificationTranslations } from '../../translations_extra';
 import { generateId } from '../../utils';
 import { Issue } from '../../types';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
@@ -190,7 +192,8 @@ export const ReportFlow: React.FC<{ onComplete: () => void }> = ({ onComplete })
       }
     } catch (e) {
       console.error(e);
-      alert('Error submitting report to backend.');
+      const t = notificationTranslations[user?.preferredLanguage as keyof typeof notificationTranslations] || notificationTranslations.en;
+      alert(t.error_submit);
     } finally {
       setIsSubmitting(false);
     }

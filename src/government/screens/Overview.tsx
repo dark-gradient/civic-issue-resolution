@@ -7,7 +7,7 @@ import { cn } from '../../utils';
 import { DashboardService, IssueService } from '../../services/api';
 
 export const GovOverview: React.FC<{ onNavigate: (s: any, id?: string) => void }> = ({ onNavigate }) => {
-  const { auth } = useApp();
+  const { auth, issues, govT } = useApp();
   const [statsData, setStatsData] = useState<any>(null);
   const [queue, setQueue] = useState<any[]>([]);
   const [deptData, setDeptData] = useState<any[]>([]);
@@ -25,7 +25,48 @@ export const GovOverview: React.FC<{ onNavigate: (s: any, id?: string) => void }
         setQueue(queueRes);
         setDeptData(dept);
       } catch (e) {
-        console.error(e);
+        console.error("API failed, using fallback data", e);
+        const localOpen = issues.filter(i => i.status === 'Submitted' || i.status === 'Assigned').length;
+        const localInProgress = issues.filter(i => i.status === 'In Progress').length;
+        const localResolved = issues.filter(i => i.status === 'Resolved' || i.status === 'Closed').length;
+        const localCritical = issues.filter(i => i.priority === 'Critical' && i.status !== 'Closed').length;
+        const localHigh = issues.filter(i => i.priority === 'High' && i.status !== 'Closed').length;
+        const localReopened = issues.filter(i => i.status === 'Reopened').length;
+        const localSlaBreaches = issues.filter(i => i.slaRemaining.startsWith('-') && i.status !== 'Closed').length;
+
+        setStatsData({
+          total_reports: issues.reduce((acc, i) => acc + (i.reportsCount || 1), 0),
+          open_issues: localOpen,
+          in_progress: localInProgress,
+          resolved: localResolved,
+          critical_issues: localCritical,
+          high_priority: localHigh,
+          reopened: localReopened,
+          sla_breaches: localSlaBreaches
+        });
+
+        const priorityQueue = [...issues]
+          .filter(i => !['Resolved', 'Closed'].includes(i.status))
+          .sort((a, b) => {
+            if (a.priority === 'Critical' && b.priority !== 'Critical') return -1;
+            if (a.priority === 'High' && !['Critical', 'High'].includes(b.priority)) return -1;
+            return 0;
+          })
+          .slice(0, 10);
+        
+        setQueue(priorityQueue as any);
+
+        const depts = ['Roads', 'Sanitation', 'Electrical', 'Water'];
+        const deptFallback = depts.map(d => {
+          const dIssues = issues.filter(i => i.department === d && !['Closed', 'Resolved'].includes(i.status));
+          return {
+            department: d,
+            open_issues: dIssues.length,
+            critical: dIssues.filter(i => i.priority === 'Critical').length,
+            backlog: dIssues.length
+          };
+        });
+        setDeptData(deptFallback);
       } finally {
         setLoading(false);
       }
@@ -40,10 +81,10 @@ export const GovOverview: React.FC<{ onNavigate: (s: any, id?: string) => void }
   if (loading || !statsData) return <div className="p-8 text-center text-slate-500">Loading Command Center...</div>;
 
   const stats = [
-    { label: 'Active Issues', value: statsData.open_issues + statsData.in_progress, trend: 'Current', icon: ListTodo, color: 'text-blue-600', bg: 'bg-blue-100', trendColor: 'text-slate-500' },
-    { label: 'Critical / High', value: statsData.critical_issues + statsData.high_priority, trend: 'Action Required', icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-100', trendColor: 'text-red-600 font-bold' },
-    { label: 'Reopened by Citizen', value: statsData.reopened, trend: 'Escalated', icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-100', trendColor: 'text-amber-600 font-bold' },
-    { label: 'SLA Breaching', value: statsData.sla_breaches, trend: 'Immediate', icon: Clock, color: 'text-indigo-600', bg: 'bg-indigo-100', trendColor: 'text-indigo-600 font-bold' },
+    { label: govT('kpi_active_issues'), value: statsData.open_issues + statsData.in_progress, trend: 'Current', icon: ListTodo, color: 'text-blue-600', bg: 'bg-blue-100', trendColor: 'text-slate-500' },
+    { label: govT('kpi_critical'), value: statsData.critical_issues + statsData.high_priority, trend: 'Action Required', icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-100', trendColor: 'text-red-600 font-bold' },
+    { label: govT('kpi_reopened'), value: statsData.reopened, trend: 'Escalated', icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-100', trendColor: 'text-amber-600 font-bold' },
+    { label: govT('kpi_sla_breach'), value: statsData.sla_breaches, trend: 'Immediate', icon: Clock, color: 'text-indigo-600', bg: 'bg-indigo-100', trendColor: 'text-indigo-600 font-bold' },
   ];
 
   return (

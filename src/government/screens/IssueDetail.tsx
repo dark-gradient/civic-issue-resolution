@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ArrowLeft, MapPin, ShieldAlert, Cpu, Layers, UserPlus, FileCheck, XCircle, CheckCircle2, AlertTriangle, Truck, Clock, ShieldCheck } from 'lucide-react';
 import { StatusBadge } from '../../citizen/screens/MyReports';
-import { formatDate, cn } from '../../utils';
+import { formatDate, cn, calculateResolutionTime, formatDuration } from '../../utils';
 import { IssueService } from '../../services/api';
 
 export const GovIssueDetail: React.FC<{ issueId: string, onBack: () => void }> = ({ issueId, onBack }) => {
-  const { auth } = useApp();
+  const { auth, issues } = useApp();
+  const formatTime = (ts: string) => { return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); };
   const [issue, setIssue] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -15,7 +16,9 @@ export const GovIssueDetail: React.FC<{ issueId: string, onBack: () => void }> =
       const data = await IssueService.getIssue(issueId);
       setIssue(data);
     } catch (e) {
-      console.error(e);
+      console.error('API fail, fallback', e);
+      const fallbackIssue = issues.find(i => i.id === issueId);
+      if (fallbackIssue) setIssue(fallbackIssue);
     } finally {
       setLoading(false);
     }
@@ -40,6 +43,11 @@ export const GovIssueDetail: React.FC<{ issueId: string, onBack: () => void }> =
             <div className="flex items-center gap-3">
               <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Issue #{issue.id}</h2>
               <StatusBadge status={issue.status} />
+              {['Resolved', 'Closed'].includes(issue.status) && calculateResolutionTime(issue) && (
+                <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-800 text-slate-100">
+                  Resolved in {formatDuration(calculateResolutionTime(issue)!)}
+                </span>
+              )}
               <span className={cn(
                 "text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full",
                 issue.priority === 'Critical' ? "bg-red-100 text-red-700" :
@@ -231,6 +239,40 @@ export const GovIssueDetail: React.FC<{ issueId: string, onBack: () => void }> =
 
         {/* COL 3: Workflow & Actions (4 cols) */}
         <div className="lg:col-span-4 space-y-6">
+          
+          {/* Timeline Insert */}
+          {issue.timeline && issue.timeline.length > 0 && (
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+              <div className="px-4 py-3 border-b border-slate-100 bg-white">
+                <h3 className="font-bold text-slate-900 tracking-tight">Issue Timeline</h3>
+              </div>
+              <div className="p-5">
+                <div className="space-y-4 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px before:h-full before:w-0.5 before:bg-slate-200">
+                  {issue.timeline.map((event: any) => (
+                    <div key={event.id} className="relative flex items-center group">
+                      <div className="flex items-center justify-center w-4 h-4 rounded-full bg-slate-300 border-2 border-white text-slate-500 shadow-sm shrink-0 z-10 group-last:bg-blue-500"></div>
+                      <div className="ml-4 p-2.5 rounded-lg bg-slate-50 border border-slate-100 shadow-sm w-full">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="font-bold text-slate-800 text-sm">{event.title}</p>
+                            {event.notes && <p className="text-xs text-slate-600 mt-0.5">{event.notes}</p>}
+                          </div>
+                          <p className="text-[10px] font-medium text-slate-500 shrink-0">{formatTime(event.timestamp)}</p>
+                        </div>
+                        {(event.actor || event.action) && (
+                          <div className="mt-1 flex items-center gap-2">
+                            {event.actor && <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{event.actor}</span>}
+                            {event.action && <span className="text-[10px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded font-medium">{event.action}</span>}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col border-t-4 border-t-blue-600">
             <div className="px-4 py-3 border-b border-slate-100 bg-white">
               <h3 className="font-bold text-slate-900 tracking-tight">Operational Workflow</h3>

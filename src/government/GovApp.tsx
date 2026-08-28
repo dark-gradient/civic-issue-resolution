@@ -19,7 +19,7 @@ export const GovApp: React.FC = () => {
   const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showSignOutConfirm, setShowSignOutConfirm] = useState(false);
-  const { auth, logoutGov, switchToCitizen, resetDemoData, issues, globalSearch, setGlobalSearch } = useApp();
+  const { auth, logoutGov, switchToCitizen, resetDemoData, issues, globalSearch, setGlobalSearch, govLanguage, setGovLanguage, govT } = useApp();
   const navigate = useNavigate();
   const currentUser = auth.governmentSession;
   
@@ -34,11 +34,11 @@ export const GovApp: React.FC = () => {
     const items = [];
 
     // All roles see basic operational things
-    items.push({ id: 'overview', label: 'Command Center', icon: LayoutDashboard });
-    items.push({ id: 'map', label: 'Live Issue Map', icon: MapIcon });
+    items.push({ id: 'overview', label: govT('nav_overview'), icon: LayoutDashboard });
+    items.push({ id: 'map', label: govT('nav_live_map'), icon: MapIcon });
     
     const activeCount = issues.filter(i => !['Resolved', 'Closed'].includes(i.status)).length;
-    items.push({ id: 'queue', label: 'Issue Queue', icon: Layers, badge: activeCount > 0 ? activeCount : undefined });
+    items.push({ id: 'queue', label: govT('nav_issue_queue'), icon: Layers, badge: activeCount > 0 ? activeCount : undefined });
     
     items.push({ id: 'departments', label: 'Departments', icon: Users });
     items.push({ id: 'field', label: 'Field Operations', icon: Truck });
@@ -47,7 +47,7 @@ export const GovApp: React.FC = () => {
     items.push({ id: 'sla', label: 'SLA Alerts', icon: AlertTriangle, badge: slaBreached > 0 ? slaBreached : undefined });
 
     items.push({ id: 'reports', label: 'Citizen Reports', icon: MessageSquare });
-    items.push({ id: 'analytics', label: 'Analytics', icon: BarChart3 });
+    items.push({ id: 'analytics', label: govT('nav_analytics'), icon: BarChart3 });
     items.push({ id: 'hotspots', label: 'Recurring Hotspots', icon: MapIcon });
     items.push({ id: 'settings', label: 'Settings', icon: Settings });
 
@@ -80,12 +80,22 @@ export const GovApp: React.FC = () => {
             </div>
           </div>
           {isMenuOpen && (
-            <div className="absolute top-12 right-0 w-64 bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden z-50 text-slate-800 animate-in fade-in slide-in-from-top-2 duration-200">
-              <div className="p-4 border-b border-slate-100">
-                <p className="font-bold">{currentUser?.name}</p>
-                <p className="text-xs text-slate-500">{currentUser?.department} Department</p>
-              </div>
-              <div className="flex flex-col">
+            
+              <div className="absolute top-12 right-0 w-64 bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden z-50 text-slate-800 animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="p-4 border-b border-slate-100">
+                  <p className="font-bold">{currentUser?.name}</p>
+                  <p className="text-xs text-slate-500">{currentUser?.department} Department</p>
+                </div>
+                <div className="p-2 border-b border-slate-100 bg-slate-50">
+                  <p className="text-xs font-bold text-slate-500 mb-2 px-2 uppercase tracking-wider">Language / ???? / ????</p>
+                  <div className="flex bg-white rounded-lg border border-slate-200 overflow-hidden">
+                    <button onClick={() => setGovLanguage("en")} className={`flex-1 py-1.5 text-xs font-bold ${govLanguage === "en" ? "bg-blue-600 text-white" : "hover:bg-slate-50"}`}>EN</button>
+                    <button onClick={() => setGovLanguage("ta")} className={`flex-1 py-1.5 text-xs font-bold border-l border-r border-slate-200 ${govLanguage === "ta" ? "bg-blue-600 text-white" : "hover:bg-slate-50"}`}>TA</button>
+                    <button onClick={() => setGovLanguage("hi")} className={`flex-1 py-1.5 text-xs font-bold ${govLanguage === "hi" ? "bg-blue-600 text-white" : "hover:bg-slate-50"}`}>HI</button>
+                  </div>
+                </div>
+                <div className="flex flex-col">
+
                 <button 
                   onClick={() => {
                     setIsMenuOpen(false);

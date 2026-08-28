@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, CheckCircle2, XCircle, MapPin, ShieldCheck } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { CitizenStatusBadge } from './MyReports';
-import { formatDate } from '../../utils';
+import { formatDate, calculateResolutionTime, formatDuration } from '../../utils';
 import { ReportService, IssueService } from '../../services/api';
 
 export const IssueDetail: React.FC<{ issueId: string, onBack: () => void }> = ({ issueId, onBack }) => {
-  const { t } = useApp();
+  const { t, issues } = useApp();
+  const formatTime = (ts: string) => {
+    return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  };
   const [issue, setIssue] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [reopenMessage, setReopenMessage] = useState(false);
@@ -17,6 +20,8 @@ export const IssueDetail: React.FC<{ issueId: string, onBack: () => void }> = ({
       setIssue(data);
     } catch (e) {
       console.error(e);
+      const fallbackIssue = issues.find(i => i.id === issueId);
+      if (fallbackIssue) setIssue(fallbackIssue);
     } finally {
       setLoading(false);
     }
@@ -70,6 +75,12 @@ export const IssueDetail: React.FC<{ issueId: string, onBack: () => void }> = ({
       <div className="p-5">
         <div className="flex justify-between items-start mb-6">
           <CitizenStatusBadge status={issue.status} />
+          {['Resolved', 'Closed'].includes(issue.status) && calculateResolutionTime(issue) && (
+            <div className="text-right">
+              <span className="block text-[10px] text-slate-500 font-bold uppercase tracking-wider">Resolution Time</span>
+              <span className="text-sm font-bold text-slate-700">{formatDuration(calculateResolutionTime(issue)!)}</span>
+            </div>
+          )}
         </div>
         
         <div className="bg-white rounded-2xl p-5 shadow-sm border-2 border-slate-200 mb-6">
@@ -84,6 +95,32 @@ export const IssueDetail: React.FC<{ issueId: string, onBack: () => void }> = ({
             <span>{issue.location}</span>
           </div>
         </div>
+
+        {/* Timeline */}
+        {issue.timeline && issue.timeline.length > 0 && (
+          <div className="bg-white rounded-2xl p-5 shadow-sm border-2 border-slate-200 mb-6">
+            <h3 className="text-lg font-bold text-slate-900 mb-4">Progress History</h3>
+            <div className="space-y-4 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-200 before:to-transparent">
+              {issue.timeline.map((event: any, i: number) => {
+                let citizenTitle = event.title;
+                if (event.action === 'Assigned') citizenTitle = 'Being handled';
+                else if (event.action === 'Work started') citizenTitle = 'Work in progress';
+                else if (event.action === 'Work completed') citizenTitle = 'Work completed';
+                else if (event.action === 'Resolution confirmed') citizenTitle = 'Resolution Confirmed';
+                
+                return (
+                  <div key={event.id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div className="flex items-center justify-center w-5 h-5 rounded-full border-4 border-white bg-blue-500 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10"></div>
+                    <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] ml-4 md:ml-0 p-3 rounded-lg bg-slate-50 border border-slate-100 shadow-sm">
+                      <p className="font-bold text-slate-800 text-sm">{citizenTitle}</p>
+                      <p className="text-xs text-slate-500 mt-1">{formatTime(event.timestamp)}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Verification Card */}
         {showVerification && !reopenMessage && (

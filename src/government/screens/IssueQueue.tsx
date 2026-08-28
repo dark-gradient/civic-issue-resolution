@@ -7,7 +7,8 @@ import { IssueService } from '../../services/api';
 
 export const GovIssueQueue: React.FC<{ onNavigate: (s: any, id?: string) => void, filterBy?: string }> = ({ onNavigate, filterBy }) => {
   const [searchTerm, setSearchTerm] = React.useState('');
-  const { globalSearch } = useApp();
+  const { globalSearch, issues: contextIssues, govT } = useApp();
+  const [langFilter, setLangFilter] = useState('all');
   const [issues, setIssues] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -17,7 +18,8 @@ export const GovIssueQueue: React.FC<{ onNavigate: (s: any, id?: string) => void
         const data = await IssueService.getIssues();
         setIssues(data);
       } catch (e) {
-        console.error(e);
+        console.error('API failed, using fallback mock');
+        setIssues(contextIssues);
       } finally {
         setLoading(false);
       }
@@ -28,6 +30,7 @@ export const GovIssueQueue: React.FC<{ onNavigate: (s: any, id?: string) => void
   const filteredIssues = issues.filter(i => {
     // Keep local filtering for prototype speed on the frontend
     if (filterBy === 'sla' && i.slaRemaining && !i.slaRemaining.startsWith('-')) return false;
+    if (langFilter !== 'all' && i.originalLanguage !== langFilter) return false;
     
     if (globalSearch) {
       const q = globalSearch.toLowerCase();
@@ -66,12 +69,24 @@ export const GovIssueQueue: React.FC<{ onNavigate: (s: any, id?: string) => void
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={16} />
             <input 
               type="text" 
-              placeholder="Search ID, Type, Ward..." 
+              placeholder={govT('search_placeholder') || "Search..."}
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none w-72 transition-all placeholder-slate-400"
             />
           </div>
+          
+          <select 
+            value={langFilter}
+            onChange={(e) => setLangFilter(e.target.value)}
+            className="px-3 py-2 bg-white border border-slate-200 text-slate-700 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">{govT('filter_all') || 'All Languages'}</option>
+            <option value="en">{govT('filter_en') || 'English'}</option>
+            <option value="ta">{govT('filter_ta') || 'Tamil'}</option>
+            <option value="hi">{govT('filter_hi') || 'Hindi'}</option>
+          </select>
+
           <button className="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-sm font-medium bg-white hover:bg-slate-50 text-slate-700 transition-colors">
             <Filter size={16} /> Filters
           </button>

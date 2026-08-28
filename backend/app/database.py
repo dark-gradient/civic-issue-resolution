@@ -29,7 +29,7 @@ async def close_mongo_connection():
 
 async def connect_to_redis():
     try:
-        db_instance.redis_client = redis.from_url(settings.REDIS_URL, decode_responses=True)
+        db_instance.redis_client = redis.from_url(settings.REDIS_URL, decode_responses=True, socket_connect_timeout=3, socket_timeout=3)
         await db_instance.redis_client.ping()
         print("Connected to Redis.")
     except Exception as e:
