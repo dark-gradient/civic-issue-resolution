@@ -12,7 +12,7 @@ async def get_departments(db=Depends(get_db)):
         d["id"] = str(d.pop("_id"))
     return deps
 
-@authorities_router.get("")
+@authorities_router.get("/")
 async def get_authorities(db=Depends(get_db)):
     cursor = db.authorities.find({})
     auths = await cursor.to_list(length=100)
