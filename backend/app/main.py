@@ -55,12 +55,13 @@ async def root():
     }
 
 from typing import List, Dict, Any
-from fastapi import Depends
+from fastapi import Depends, Request
 from app.database import get_db
 from datetime import datetime
 
 @app.post("/api/internal/seed")
-async def seed_data(issues: List[Dict[str, Any]], db=Depends(get_db)):
+async def seed_data(request: Request, db=Depends(get_db)):
+    issues = await request.json()
     for issue in issues:
         if '_id' in issue: del issue['_id']
         if 'id' in issue: del issue['id']
