@@ -48,9 +48,22 @@ async def login_citizen(data: CitizenLoginRequest, db=Depends(get_db)):
         
     user = await db.users.find_one({"phone_hash": phone_hash, "type": "citizen"})
     if not user:
-        raise HTTPException(status_code=404, detail="Citizen not found")
+        # Auto-register for prototype demo purposes
+        new_citizen = {
+            "name": "Citizen",
+            "phone_hash": phone_hash,
+            "identity_verification_status": "verified",
+            "preferred_language": "en",
+            "city": "Chennai",
+            "type": "citizen",
+            "role": "citizen",
+            "created_at": datetime.utcnow()
+        }
+        res = await db.users.insert_one(new_citizen)
+        user_id = str(res.inserted_id)
+    else:
+        user_id = str(user["_id"])
         
-    user_id = str(user["_id"])
     await log_audit_action(user_id, "CITIZEN_LOGIN", "users", user_id)
     
     token = create_access_token(user_id, "citizen", "citizen")
@@ -60,7 +73,19 @@ async def login_citizen(data: CitizenLoginRequest, db=Depends(get_db)):
 async def login_government(data: GovernmentLoginRequest, db=Depends(get_db)):
     user = await db.users.find_one({"employee_id": data.employee_id, "type": "government"})
     if not user:
-        raise HTTPException(status_code=404, detail="Government user not found")
+        # Auto-register for prototype demo purposes
+        new_gov = {
+            "name": "Gov Official",
+            "employee_id": data.employee_id,
+            "hashed_password": get_password_hash(data.password),
+            "department": "Public Works",
+            "jurisdiction": "Chennai",
+            "type": "government",
+            "role": "admin",
+            "created_at": datetime.utcnow()
+        }
+        res = await db.users.insert_one(new_gov)
+        user = await db.users.find_one({"_id": res.inserted_id})
         
     if not verify_password(data.password, user["hashed_password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
