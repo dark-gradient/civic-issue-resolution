@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
 import { AlertTriangle, Cpu } from 'lucide-react';
 import { DashboardService, AnalyticsService } from '../../services/api';
+import { useApp } from '../../context/AppContext';
 
 export const GovAnalytics: React.FC = () => {
+  const { issues } = useApp();
   const [deptData, setDeptData] = useState<any[]>([]);
   const [trendData, setTrendData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
