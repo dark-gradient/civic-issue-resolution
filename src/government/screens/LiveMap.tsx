@@ -231,7 +231,7 @@ export const GovLiveMap: React.FC<{ onNavigate?: (s: any, id?: string) => void, 
           className="w-full h-full"
           scrollWheelZoom={true}
         >
-          <MapController focusedIssueId={focusedIssueId} issues={issues} />
+          <MapController focusedIssueId={focusedIssueId} issues={mapIssues} />
           <TileLayer
             key={retryKey}
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
